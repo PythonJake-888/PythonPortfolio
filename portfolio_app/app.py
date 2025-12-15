@@ -109,6 +109,6 @@ def seed_projects():
 # ---------- RUN ----------
 if __name__ == "__main__":
     os.makedirs(os.path.join(BASE_DIR, "instance"), exist_ok=True)
-    #init_db()
+    init_db()
     #init_posts_table()
     app.run(debug=True)
