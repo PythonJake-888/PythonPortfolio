@@ -1,15 +1,24 @@
+<!-- templates/projects.html -->
 {% extends "base.html" %}
-{% block title %}Projects{% endblock %}
 
 {% block content %}
 <h1>Projects</h1>
 
 {% for project in projects %}
-<div class="card">
+  <div class="project-card">
     <h2>{{ project.title }}</h2>
+
+    {% if project.image %}
+      <img src="{{ url_for('static', filename='uploads/' ~ project.image) }}"
+           class="project-image">
+    {% endif %}
+
     <p>{{ project.description }}</p>
-    <p><strong>Tech:</strong> {{ project.tech }}</p>
-    <a href="{{ project.github }}" target="_blank">View on GitHub</a>
-</div>
+
+    {% if project.github %}
+      <a href="{{ project.github }}" target="_blank">View on GitHub</a>
+    {% endif %}
+  </div>
 {% endfor %}
+
 {% endblock %}

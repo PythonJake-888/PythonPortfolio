@@ -1,23 +1,71 @@
-<form action="/admin/add" method="post" enctype="multipart/form-data">
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Admin – Projects</h1>
+
+<form method="POST"
+      action="{{ url_for('add_project') }}"
+      enctype="multipart/form-data"
+      class="admin-form">
+
   <input name="title" placeholder="Title" required>
-  <textarea name="description" placeholder="Description"></textarea>
   <input name="tech" placeholder="Tech">
-  <input name="github" placeholder="GitHub link">
-  <input type="file" name="image" required>
-  <button type="submit">Add Project</button>
+  <input name="github" placeholder="GitHub URL">
+
+  <textarea name="description" placeholder="Description"></textarea>
+
+  <input type="file" name="image">
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">
+      Add Project
+    </button>
+  </div>
+
 </form>
+
+
 
 <hr>
 
 {% for project in projects %}
-  <h3>{{ project.title }}</h3>
-  <img src="{{ url_for('static', filename='uploads/' + project.image) }}" width="200">
+  <div class="admin-project-card">
 
-  <a href="{{ url_for('edit_project', id=project.id) }}">Edit</a>
+    <h3>{{ project.title }}</h3>
 
+    {% if project.image %}
+      <img
+        src="{{ url_for('static', filename='uploads/' ~ project.image) }}"
+        alt="{{ project.title }}"
+        class="admin-project-image"
+      >
+    {% else %}
+      <p class="no-image">No image uploaded</p>
+    {% endif %}
 
-  <a href="{{ url_for('delete_project', id=project.id) }}"
-     onclick="return confirm('Delete this project?');">
-     Delete
-  </a>
+    <p>{{ project.description }}</p>
+    <small>{{ project.tech }}</small>
+
+    <div class="admin-actions">
+      <!-- EDIT -->
+      <a href="{{ url_for('edit_project', id=project.id) }}"
+         class="btn btn-edit">
+        Edit
+      </a>
+
+      <!-- DELETE -->
+      <form method="POST"
+            action="{{ url_for('delete_project', id=project.id) }}"
+            onsubmit="return confirm('Are you sure you want to delete this project?');"
+            style="display:inline;">
+        <button type="submit" class="btn btn-delete">
+          Delete
+        </button>
+      </form>
+    </div>
+
+  </div>
 {% endfor %}
+
+
+{% endblock %}

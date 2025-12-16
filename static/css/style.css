@@ -1,35 +1,197 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
+/* ------------------ RESET ------------------ */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+body {
+  background: #f5f6f8;
+  color: #222;
+  line-height: 1.6;
+}
+
+/* ------------------ NAVBAR ------------------ */
 nav {
-    background: #222;
-    padding: 10px;
+  background: #111;
+  padding: 14px 24px;
 }
 
 nav a {
-    color: white;
-    margin-right: 15px;
-    text-decoration: none;
+  color: #fff;
+  text-decoration: none;
+  margin-right: 18px;
+  font-weight: 500;
 }
 
-main {
-    padding: 20px;
+nav a:hover {
+  text-decoration: underline;
 }
 
-.card {
-    border: 1px solid #ccc;
-    padding: 15px;
-    margin-bottom: 10px;
+/* ------------------ PAGE LAYOUT ------------------ */
+.container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 20px;
 }
 
-input, textarea {
-    display: block;
-    width: 100%;
-    margin-bottom: 10px;
+h1 {
+  margin-bottom: 20px;
 }
 
-button {
-    padding: 8px 12px;
+/* ------------------ FORMS ------------------ */
+form input,
+form textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+form textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+form button {
+  padding: 10px 18px;
+  border-radius: 6px;
+  border: none;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+form button:hover {
+  background: #1e4fd8;
+}
+
+/* ------------------ ADMIN PROJECT CARDS ------------------ */
+.admin-project-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 18px;
+  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  gap: 18px;
+  align-items: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.admin-project-image {
+  width: 120px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.admin-project-info h3 {
+  margin-bottom: 6px;
+}
+
+.admin-project-info p {
+  font-size: 0.95rem;
+  color: #444;
+}
+.admin-form {
+  margin-bottom: 2rem;
+}
+
+
+/* ------------------ TECH BADGE ------------------ */
+.tech-badge {
+  display: inline-block;
+  background: #eef2ff;
+  color: #1e3a8a;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  margin-top: 6px;
+}
+
+/* ------------------ ACTION BUTTONS ------------------ */
+
+
+.btn {
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-edit {
+  background: #2563eb;
+  color: #fff;
+}
+
+.btn-edit:hover {
+  background: #1e4fd8;
+}
+
+.btn-delete {
+  background: #dc2626;
+  color: #fff;
+}
+
+.btn-delete:hover {
+  background: #b91c1c;
+}
+
+/* ------------------ RESPONSIVE ------------------ */
+@media (max-width: 700px) {
+  .admin-project-card {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .admin-project-image {
+    margin: 0 auto;
+  }
+
+  .admin-actions {
+    justify-content: center;
+  }
+
+  .admin-form {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+}
+
+.admin-form input,
+.admin-form textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.form-actions {
+  margin-top: 15px;
+}
+
+.btn-primary {
+  background: #4f46e5;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: #4338ca;
+}
+
 }

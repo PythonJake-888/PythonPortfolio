@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Admin – Projects</h1>
+
+<form method="POST">
+  <input type="text" name="title" placeholder="Title"
+         value="{{ project.title if project else '' }}" required>
+
+  <input type="text" name="tech" placeholder="Tech"
+         value="{{ project.tech if project else '' }}">
+
+  <input type="text" name="github" placeholder="GitHub URL"
+         value="{{ project.github if project else '' }}">
+
+  <textarea name="description" placeholder="Description" required>
+{{ project.description if project else '' }}</textarea>
+
+  <button type="submit">
+    {{ button_text }}
+  </button>
+</form>

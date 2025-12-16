@@ -3,18 +3,24 @@
 
 <h1>Edit Project</h1>
 
-<form method="POST">
-  <label>Title</label>
-  <input type="text" name="title" value="{{ project.title }}" required>
+<form method="POST"
+      action="{{ url_for('update_project', id=project.id) }}"
+      enctype="multipart/form-data">
 
-  <label>Description</label>
-  <textarea name="description" required>{{ project.description }}</textarea>
+  <input name="title" value="{{ project.title }}" required>
+  <input name="tech" value="{{ project.tech }}">
+  <input name="github" value="{{ project.github }}">
+  <textarea name="description">{{ project.description }}</textarea>
 
-  <label>Tech</label>
-  <input type="text" name="tech" value="{{ project.tech }}">
+  {% if project.image %}
+    <p>Current Image:</p>
+    <img src="{{ url_for('static', filename='uploads/' ~ project.image) }}"
+         style="max-width:200px;">
+    <input type="hidden" name="current_image" value="{{ project.image }}">
+  {% endif %}
 
-  <label>GitHub URL</label>
-  <input type="text" name="github" value="{{ project.github }}">
+  <p>Change Image:</p>
+  <input type="file" name="image">
 
   <button type="submit">Save Changes</button>
 </form>

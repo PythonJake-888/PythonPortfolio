@@ -1,33 +1,25 @@
-from flask import Flask, render_template, request, redirect, url_for, session
-import sqlite3
 import os
+import sqlite3
+from flask import Flask, render_template, request, redirect, url_for, session
+from werkzeug.utils import secure_filename
 
+# ---------- APP SETUP ----------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "static", "uploads")
 DATABASE = os.path.join(BASE_DIR, "instance", "portfolio.db")
 
 app = Flask(__name__)
-app.secret_key = "dev-secret-key"
+app.secret_key = "dev-secret"
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(os.path.join(BASE_DIR, "instance"), exist_ok=True)
 
 # ---------- DATABASE ----------
 def get_db():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
     return conn
-
-def init_db():
-    conn = get_db()
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS projects (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
-            description TEXT,
-            tech TEXT,
-            github TEXT
-        )
-    """)
-    conn.commit()
-    conn.close()
 
 # ---------- AUTH ----------
 ADMIN_USER = "admin"
@@ -52,10 +44,7 @@ def blog():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        if (
-            request.form.get("username") == ADMIN_USER
-            and request.form.get("password") == ADMIN_PASS
-        ):
+        if request.form["username"] == ADMIN_USER and request.form["password"] == ADMIN_PASS:
             session["admin"] = True
             return redirect(url_for("admin"))
         return render_template("login.html", error="Invalid credentials")
@@ -63,7 +52,7 @@ def login():
 
 @app.route("/logout")
 def logout():
-    session.pop("admin", None)
+    session.clear()
     return redirect(url_for("home"))
 
 @app.route("/admin")
@@ -75,27 +64,83 @@ def admin():
     projects = conn.execute("SELECT * FROM projects").fetchall()
     conn.close()
     return render_template("admin.html", projects=projects)
+@app.route("/admin/edit/<int:id>")
+def edit_project(id):
+    if not session.get("admin"):
+        return redirect(url_for("login"))
+
+    conn = get_db()
+    project = conn.execute(
+        "SELECT * FROM projects WHERE id = ?", (id,)
+    ).fetchone()
+    conn.close()
+
+    return render_template("edit_project.html", project=project)
+@app.route("/admin/update/<int:id>", methods=["POST"])
+def update_project(id):
+    if not session.get("admin"):
+        return redirect(url_for("login"))
+
+    image_file = request.files.get("image")
+    image_name = request.form.get("current_image")
+
+    if image_file and image_file.filename:
+        image_name = secure_filename(image_file.filename)
+        image_file.save(os.path.join(app.config["UPLOAD_FOLDER"], image_name))
+
+    conn = get_db()
+    conn.execute(
+        """
+        UPDATE projects
+        SET title=?, description=?, tech=?, github=?, image=?
+        WHERE id=?
+        """,
+        (
+            request.form["title"],
+            request.form["description"],
+            request.form["tech"],
+            request.form["github"],
+            image_name,
+            id,
+        ),
+    )
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for("admin"))
 
 @app.route("/admin/add", methods=["POST"])
 def add_project():
     if not session.get("admin"):
         return redirect(url_for("login"))
 
+    image_file = request.files.get("image")
+    image_name = None
+
+    if image_file and image_file.filename:
+        image_name = secure_filename(image_file.filename)
+        image_file.save(os.path.join(app.config["UPLOAD_FOLDER"], image_name))
+
     conn = get_db()
     conn.execute(
-        "INSERT INTO projects (title, description, tech, github) VALUES (?, ?, ?, ?)",
+        """
+        INSERT INTO projects (title, description, tech, github, image)
+        VALUES (?, ?, ?, ?, ?)
+        """,
         (
             request.form["title"],
             request.form["description"],
             request.form["tech"],
             request.form["github"],
+            image_name,
         ),
     )
     conn.commit()
     conn.close()
+
     return redirect(url_for("admin"))
 
-@app.route("/admin/delete/<int:id>")
+@app.route("/admin/delete/<int:id>", methods=["POST"])
 def delete_project(id):
     if not session.get("admin"):
         return redirect(url_for("login"))
@@ -104,45 +149,8 @@ def delete_project(id):
     conn.execute("DELETE FROM projects WHERE id = ?", (id,))
     conn.commit()
     conn.close()
+
     return redirect(url_for("admin"))
 
-
-@app.route("/admin/edit/<int:id>", methods=["GET", "POST"])
-def edit_project(id):
-    if not session.get("admin"):
-        return redirect(url_for("login"))
-
-    conn = get_db()
-
-    if request.method == "POST":
-        conn.execute(
-            """
-            UPDATE projects
-            SET title = ?, description = ?, tech = ?, github = ?
-            WHERE id = ?
-            """,
-            (
-                request.form["title"],
-                request.form["description"],
-                request.form["tech"],
-                request.form["github"],
-                id,
-            ),
-        )
-        conn.commit()
-        conn.close()
-        return redirect(url_for("admin"))
-
-    project = conn.execute(
-        "SELECT * FROM projects WHERE id = ?", (id,)
-    ).fetchone()
-    conn.close()
-
-    return render_template("edit_project.html", project=project)
-
-
-# ---------- RUN ----------
 if __name__ == "__main__":
-    os.makedirs(os.path.join(BASE_DIR, "instance"), exist_ok=True)
-    init_db()
     app.run(debug=True)
