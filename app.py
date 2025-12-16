@@ -106,6 +106,41 @@ def delete_project(id):
     conn.close()
     return redirect(url_for("admin"))
 
+
+@app.route("/admin/edit/<int:id>", methods=["GET", "POST"])
+def edit_project(id):
+    if not session.get("admin"):
+        return redirect(url_for("login"))
+
+    conn = get_db()
+
+    if request.method == "POST":
+        conn.execute(
+            """
+            UPDATE projects
+            SET title = ?, description = ?, tech = ?, github = ?
+            WHERE id = ?
+            """,
+            (
+                request.form["title"],
+                request.form["description"],
+                request.form["tech"],
+                request.form["github"],
+                id,
+            ),
+        )
+        conn.commit()
+        conn.close()
+        return redirect(url_for("admin"))
+
+    project = conn.execute(
+        "SELECT * FROM projects WHERE id = ?", (id,)
+    ).fetchone()
+    conn.close()
+
+    return render_template("edit_project.html", project=project)
+
+
 # ---------- RUN ----------
 if __name__ == "__main__":
     os.makedirs(os.path.join(BASE_DIR, "instance"), exist_ok=True)

@@ -3,11 +3,19 @@
 
 <h1>Edit Project</h1>
 
-<form method="POST" action="{{ url_for('update_project', id=project.id) }}">
-  <input name="title" value="{{ project.title }}" required>
-  <input name="tech" value="{{ project.tech }}" required>
-  <input name="github" value="{{ project.github }}" required>
+<form method="POST">
+  <label>Title</label>
+  <input type="text" name="title" value="{{ project.title }}" required>
+
+  <label>Description</label>
   <textarea name="description" required>{{ project.description }}</textarea>
+
+  <label>Tech</label>
+  <input type="text" name="tech" value="{{ project.tech }}">
+
+  <label>GitHub URL</label>
+  <input type="text" name="github" value="{{ project.github }}">
+
   <button type="submit">Save Changes</button>
 </form>
 

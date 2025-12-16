@@ -1,23 +1,23 @@
-{% extends "base.html" %}
-{% block title %}Admin{% endblock %}
-
-{% block content %}
-<h1>Admin Panel</h1>
-
-<form method="post" action="{{ url_for('add_project') }}">
-    <input name="title" placeholder="Title" required>
-    <textarea name="description" placeholder="Description"></textarea>
-    <input name="tech" placeholder="Tech">
-    <input name="github" placeholder="GitHub URL">
-    <button type="submit">Add Project</button>
+<form action="/admin/add" method="post" enctype="multipart/form-data">
+  <input name="title" placeholder="Title" required>
+  <textarea name="description" placeholder="Description"></textarea>
+  <input name="tech" placeholder="Tech">
+  <input name="github" placeholder="GitHub link">
+  <input type="file" name="image" required>
+  <button type="submit">Add Project</button>
 </form>
 
 <hr>
 
 {% for project in projects %}
-<div class="card">
-    <strong>{{ project.title }}</strong>
-    <a href="{{ url_for('delete_project', id=project.id) }}">Delete</a>
-</div>
+  <h3>{{ project.title }}</h3>
+  <img src="{{ url_for('static', filename='uploads/' + project.image) }}" width="200">
+
+  <a href="{{ url_for('edit_project', id=project.id) }}">Edit</a>
+
+
+  <a href="{{ url_for('delete_project', id=project.id) }}"
+     onclick="return confirm('Delete this project?');">
+     Delete
+  </a>
 {% endfor %}
-{% endblock %}
