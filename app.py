@@ -1,7 +1,9 @@
-from flask import Flask, render_template
-from flask import request
 import sqlite3
 import os
+
+
+from flask import Flask, render_template, request, redirect, url_for
+
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATABASE = os.path.join(BASE_DIR, "instance", "portfolio.db")
@@ -13,19 +15,6 @@ def get_db():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
     return conn
-
-def init_posts_table():
-    conn = get_db()
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS posts (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
-            content TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-    conn.commit()
-    conn.close()
 
 def init_db():
     conn = get_db()
@@ -41,41 +30,21 @@ def init_db():
     conn.commit()
     conn.close()
 
-# ---------- ROUTES ----------
+# ---------- PUBLIC ROUTES ----------
 @app.route("/")
 def home():
     return render_template("home.html")
 
-
-@app.route("/projects", methods=["GET", "POST"])
+@app.route("/projects")
 def projects():
     conn = get_db()
-
-    if request.method == "POST":
-        title = request.form["title"]
-        description = request.form["description"]
-        tech = request.form["tech"]
-        github = request.form["github"]
-
-        conn.execute(
-            "INSERT INTO projects (title, description, tech, github) VALUES (?, ?, ?, ?)",
-            (title, description, tech, github)
-        )
-        conn.commit()
-
     projects = conn.execute("SELECT * FROM projects").fetchall()
     conn.close()
-
     return render_template("projects.html", projects=projects)
-
 
 @app.route("/blog")
 def blog():
-    conn = get_db()
-    posts = conn.execute("SELECT * FROM posts").fetchall()
-    conn.close()
-    return render_template("blog.html", posts=posts)
-
+    return render_template("blog.html")
 
 @app.route("/about")
 def about():
@@ -85,30 +54,69 @@ def about():
 def contact():
     return render_template("contact.html")
 
-
-
-def seed_projects():
+# ---------- ADMIN ROUTES ----------
+@app.route("/admin", methods=["GET", "POST"])
+def admin():
     conn = get_db()
-    conn.execute(
-        "INSERT INTO projects (title, description, tech, github) VALUES (?, ?, ?, ?)",
-        ("WeatherWake",
-         "GUI app that displays live weather data using an external API.",
-         "Python, API, GUI",
-         "#")
-    )
-    conn.execute(
-        "INSERT INTO projects (title, description, tech, github) VALUES (?, ?, ?, ?)",
-        ("Pokemon RPG",
-         "Turn-based RPG inspired by Pokémon with combat and inventory systems.",
-         "Python, Pygame",
-         "#")
-    )
+
+    if request.method == "POST":
+        conn.execute(
+            "INSERT INTO projects (title, description, tech, github) VALUES (?, ?, ?, ?)",
+            (
+                request.form["title"],
+                request.form["description"],
+                request.form["tech"],
+                request.form["github"]
+            )
+        )
+        conn.commit()
+        conn.close()
+        return redirect(url_for("admin"))
+
+    projects = conn.execute("SELECT * FROM projects").fetchall()
+    conn.close()
+    return render_template("admin.html", projects=projects)
+
+@app.route("/admin/edit/<int:id>", methods=["GET", "POST"])
+def edit_project(id):
+    conn = get_db()
+
+    if request.method == "POST":
+        conn.execute(
+            """
+            UPDATE projects
+            SET title = ?, description = ?, tech = ?, github = ?
+            WHERE id = ?
+            """,
+            (
+                request.form["title"],
+                request.form["description"],
+                request.form["tech"],
+                request.form["github"],
+                id
+            )
+        )
+        conn.commit()
+        conn.close()
+        return redirect(url_for("admin"))
+
+    project = conn.execute(
+        "SELECT * FROM projects WHERE id = ?", (id,)
+    ).fetchone()
+    conn.close()
+
+    return render_template("edit_project.html", project=project)
+
+@app.route("/admin/delete/<int:id>")
+def delete_project(id):
+    conn = get_db()
+    conn.execute("DELETE FROM projects WHERE id = ?", (id,))
     conn.commit()
     conn.close()
+    return redirect(url_for("admin"))
 
 # ---------- RUN ----------
 if __name__ == "__main__":
     os.makedirs(os.path.join(BASE_DIR, "instance"), exist_ok=True)
     init_db()
-    #init_posts_table()
     app.run(debug=True)
