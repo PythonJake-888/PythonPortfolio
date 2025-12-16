@@ -8,6 +8,7 @@ DATABASE = os.path.join(BASE_DIR, "instance", "portfolio.db")
 app = Flask(__name__)
 app.secret_key = "dev-secret-key"
 
+
 # ---------- DATABASE ----------
 def get_db():
     conn = sqlite3.connect(DATABASE)
