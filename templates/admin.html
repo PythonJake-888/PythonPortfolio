@@ -1,25 +1,23 @@
 {% extends "base.html" %}
+{% block title %}Admin{% endblock %}
+
 {% block content %}
+<h1>Admin Panel</h1>
 
-<h1>Admin – Projects</h1>
-
-<form method="post" class="admin-form">
+<form method="post" action="{{ url_for('add_project') }}">
     <input name="title" placeholder="Title" required>
-    <input name="tech" placeholder="Tech">
-    <input name="github" placeholder="GitHub link">
     <textarea name="description" placeholder="Description"></textarea>
+    <input name="tech" placeholder="Tech">
+    <input name="github" placeholder="GitHub URL">
     <button type="submit">Add Project</button>
 </form>
 
 <hr>
 
 {% for project in projects %}
-<div class="admin-card">
-    <h3>{{ project.title }}</h3>
-    <p>{{ project.description }}</p>
-    <a href="{{ url_for('edit_project', id=project.id) }}">Edit</a> |
+<div class="card">
+    <strong>{{ project.title }}</strong>
     <a href="{{ url_for('delete_project', id=project.id) }}">Delete</a>
 </div>
 {% endfor %}
-
 {% endblock %}

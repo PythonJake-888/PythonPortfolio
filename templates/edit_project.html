@@ -3,14 +3,12 @@
 
 <h1>Edit Project</h1>
 
-<form method="post" class="admin-form">
-    <input name="title" value="{{ project.title }}" required>
-    <input name="tech" value="{{ project.tech }}">
-    <input name="github" value="{{ project.github }}">
-    <textarea name="description">{{ project.description }}</textarea>
-    <button type="submit">Update Project</button>
+<form method="POST" action="{{ url_for('update_project', id=project.id) }}">
+  <input name="title" value="{{ project.title }}" required>
+  <input name="tech" value="{{ project.tech }}" required>
+  <input name="github" value="{{ project.github }}" required>
+  <textarea name="description" required>{{ project.description }}</textarea>
+  <button type="submit">Save Changes</button>
 </form>
-
-<a href="{{ url_for('admin') }}">← Back to Admin</a>
 
 {% endblock %}
