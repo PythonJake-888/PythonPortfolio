@@ -33,9 +33,19 @@ def home():
 @app.route("/projects")
 def projects():
     conn = get_db()
-    projects = conn.execute("SELECT * FROM projects").fetchall()
+    demo_projects = conn.execute(
+        "SELECT * FROM projects WHERE has_demo = 1"
+    ).fetchall()
+    code_projects = conn.execute(
+        "SELECT * FROM projects WHERE has_demo = 0"
+    ).fetchall()
     conn.close()
-    return render_template("projects.html", projects=projects)
+
+    return render_template(
+        "projects.html",
+        demo_projects=demo_projects,
+        code_projects=code_projects
+    )
 
 @app.route("/blog")
 def blog():
@@ -64,50 +74,6 @@ def admin():
     projects = conn.execute("SELECT * FROM projects").fetchall()
     conn.close()
     return render_template("admin.html", projects=projects)
-@app.route("/admin/edit/<int:id>")
-def edit_project(id):
-    if not session.get("admin"):
-        return redirect(url_for("login"))
-
-    conn = get_db()
-    project = conn.execute(
-        "SELECT * FROM projects WHERE id = ?", (id,)
-    ).fetchone()
-    conn.close()
-
-    return render_template("edit_project.html", project=project)
-@app.route("/admin/update/<int:id>", methods=["POST"])
-def update_project(id):
-    if not session.get("admin"):
-        return redirect(url_for("login"))
-
-    image_file = request.files.get("image")
-    image_name = request.form.get("current_image")
-
-    if image_file and image_file.filename:
-        image_name = secure_filename(image_file.filename)
-        image_file.save(os.path.join(app.config["UPLOAD_FOLDER"], image_name))
-
-    conn = get_db()
-    conn.execute(
-        """
-        UPDATE projects
-        SET title=?, description=?, tech=?, github=?, image=?
-        WHERE id=?
-        """,
-        (
-            request.form["title"],
-            request.form["description"],
-            request.form["tech"],
-            request.form["github"],
-            image_name,
-            id,
-        ),
-    )
-    conn.commit()
-    conn.close()
-
-    return redirect(url_for("admin"))
 
 @app.route("/admin/add", methods=["POST"])
 def add_project():
@@ -121,11 +87,64 @@ def add_project():
         image_name = secure_filename(image_file.filename)
         image_file.save(os.path.join(app.config["UPLOAD_FOLDER"], image_name))
 
+    has_demo = 1 if request.form.get("has_demo") else 0
+
     conn = get_db()
     conn.execute(
         """
-        INSERT INTO projects (title, description, tech, github, image)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO projects (title, description, tech, github, demo_url, image, has_demo)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            request.form["title"],
+            request.form["description"],
+            request.form["tech"],
+            request.form["github"],
+            request.form["demo_url"],
+            image_name,
+            has_demo,
+        ),
+    )
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for("admin"))
+
+
+
+@app.route("/admin/edit/<int:id>")
+def edit_project(id):
+    if not session.get("admin"):
+        return redirect(url_for("login"))
+
+    conn = get_db()
+    project = conn.execute(
+        "SELECT * FROM projects WHERE id = ?", (id,)
+    ).fetchone()
+    conn.close()
+
+    return render_template("edit_project.html", project=project)
+
+@app.route("/admin/update/<int:id>", methods=["POST"])
+def update_project(id):
+    if not session.get("admin"):
+        return redirect(url_for("login"))
+
+    image_file = request.files.get("image")
+    image_name = request.form.get("current_image")
+
+    if image_file and image_file.filename:
+        image_name = secure_filename(image_file.filename)
+        image_file.save(os.path.join(app.config["UPLOAD_FOLDER"], image_name))
+
+    has_demo = 1 if request.form.get("has_demo") else 0
+
+    conn = get_db()
+    conn.execute(
+        """
+        UPDATE projects
+        SET title=?, description=?, tech=?, github=?, image=?, has_demo=?
+        WHERE id=?
         """,
         (
             request.form["title"],
@@ -133,6 +152,8 @@ def add_project():
             request.form["tech"],
             request.form["github"],
             image_name,
+            has_demo,
+            id,
         ),
     )
     conn.commit()

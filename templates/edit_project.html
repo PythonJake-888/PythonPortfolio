@@ -1,59 +1,38 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="container">
-  <h1>Edit Project</h1>
+<h1>Edit Project</h1>
 
-  <form method="POST"
-        action="{{ url_for('update_project', id=project.id) }}"
-        enctype="multipart/form-data"
-        class="admin-project-card edit-card">
+<form method="POST"
+      action="{{ url_for('update_project', id=project.id) }}"
+      enctype="multipart/form-data"
+      class="edit-form">
 
-    <!-- IMAGE COLUMN -->
-    <div>
-      {% if project.image %}
-        <img src="{{ url_for('static', filename='uploads/' ~ project.image) }}"
-             class="admin-project-image"
-             alt="Project image">
-      {% else %}
-        <div class="admin-project-image placeholder">
-          No image
-        </div>
-      {% endif %}
+  <input name="title" value="{{ project.title }}" required>
+  <input name="tech" value="{{ project.tech }}">
+  <input name="github" value="{{ project.github }}">
+  <input name="demo_url" value="{{ project.demo_url }}">
 
-      <label class="file-label">
-        Change Image
-        <input type="file" name="image">
-      </label>
-    </div>
+  <textarea name="description">{{ project.description }}</textarea>
 
-    <!-- INFO COLUMN -->
-    <div class="admin-project-info">
-      <label>Title</label>
-      <input type="text" name="title" value="{{ project.title }}" required>
+  <div class="checkbox-row">
+    <input type="checkbox" name="has_demo" id="has_demo"
+           {% if project.has_demo %}checked{% endif %}>
+    <label for="has_demo">Has Live Demo</label>
+  </div>
 
-      <label>Tech</label>
-      <input type="text" name="tech" value="{{ project.tech }}">
+  {% if project.image %}
+    <img src="{{ url_for('static', filename='uploads/' ~ project.image) }}"
+         class="admin-project-image">
+    <input type="hidden" name="current_image" value="{{ project.image }}">
+  {% endif %}
 
-      <label>GitHub</label>
-      <input type="url" name="github" value="{{ project.github }}">
+  <input type="file" name="image">
 
-      <label>Description</label>
-      <textarea name="description">{{ project.description }}</textarea>
-    </div>
-
-    <!-- ACTIONS -->
-    <div class="admin-actions">
-      <button type="submit" class="btn btn-primary">
-        Save Changes
-      </button>
-
-      <a href="{{ url_for('admin') }}" class="btn btn-delete">
-        Cancel
-      </a>
-    </div>
-
-  </form>
-</div>
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a href="{{ url_for('admin') }}" class="btn btn-edit">Cancel</a>
+  </div>
+</form>
 
 {% endblock %}

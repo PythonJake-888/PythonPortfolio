@@ -1,9 +1,5 @@
 /* =====================================================
    GLOBAL RESET
-   -----------------------------------------------------
-   - Removes default browser spacing
-   - Ensures consistent sizing
-   - Sets a modern system font
 ===================================================== */
 * {
   box-sizing: border-box;
@@ -13,25 +9,19 @@
 }
 
 /* =====================================================
-   BODY / PAGE BACKGROUND
-   -----------------------------------------------------
-   - Dark slate background (dev-friendly)
-   - Light text so content is readable
+   BODY
 ===================================================== */
 body {
-  background: #0f172a;          /* Dark navy / slate */
-  color: #e5e7eb;               /* Light gray text */
+  background: #0f172a;
+  color: #e5e7eb;
   line-height: 1.6;
 }
 
 /* =====================================================
-   NAVIGATION BAR
-   -----------------------------------------------------
-   - Fixed dark bar
-   - Always visible
+   NAV
 ===================================================== */
 nav {
-  background: #020617;          /* Very dark header */
+  background: #020617;
   padding: 14px 24px;
   display: flex;
   align-items: center;
@@ -51,9 +41,6 @@ nav a:hover {
 
 /* =====================================================
    PAGE CONTAINER
-   -----------------------------------------------------
-   - Centers content
-   - Prevents stretching on large screens
 ===================================================== */
 .container {
   max-width: 1100px;
@@ -63,47 +50,36 @@ nav a:hover {
 
 /* =====================================================
    HEADINGS
-   -----------------------------------------------------
-   - Bright enough for dark backgrounds
 ===================================================== */
 h1 {
-  margin-bottom: 24px;
   font-size: 2rem;
+  margin-bottom: 24px;
   color: #f9fafb;
 }
 
-h2, h3 {
+h2 {
+  margin-bottom: 20px;
   color: #f9fafb;
 }
 
-/* =====================================================
-   TEXT ELEMENTS
-   -----------------------------------------------------
-   - Slightly muted for readability
-===================================================== */
-p, label, small {
-  color: #cbd5f5;
+h3 {
+  color: #111827;
 }
 
 /* =====================================================
-   ADMIN + EDIT FORMS
-   -----------------------------------------------------
-   - Shared styling so pages match
-   - Light cards on dark background
+   FORMS (ADMIN + EDIT)
 ===================================================== */
 .admin-form,
 .edit-form {
-  background: #f9fafb;          /* Light card */
-  border: 1px solid #e5e7eb;
-  padding: 24px;
-  border-radius: 12px;
-  margin-bottom: 32px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  background: #f9fafb;
+  border-radius: 14px;
+  padding: 28px;
+  margin-bottom: 60px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+  max-width: 100%;
 }
 
-/* =====================================================
-   FORM INPUTS
-===================================================== */
+/* Inputs */
 .admin-form input,
 .admin-form textarea,
 .edit-form input,
@@ -118,21 +94,28 @@ p, label, small {
   background: #ffffff;
 }
 
-/* Textarea behavior */
 textarea {
   resize: vertical;
   min-height: 110px;
 }
 
 /* =====================================================
-   FORM BUTTON ROW
+   CHECKBOX ROW (FIXED ALIGNMENT)
 ===================================================== */
-.form-actions {
-  margin-top: 16px;
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0 20px;
+  color: #111827;
+}
+
+.checkbox-row input {
+  width: auto;
 }
 
 /* =====================================================
-   BUTTON BASE STYLE
+   BUTTONS
 ===================================================== */
 .btn {
   padding: 10px 18px;
@@ -142,126 +125,155 @@ textarea {
   border: none;
   cursor: pointer;
   text-decoration: none;
-  display: inline-block;
 }
 
-/* Primary button (Add / Save) */
 .btn-primary {
   background: #2563eb;
-  color: #ffffff;
+  color: white;
 }
 
 .btn-primary:hover {
   background: #1e4fd8;
 }
 
-/* Edit button */
 .btn-edit {
   background: #4f46e5;
-  color: #ffffff;
+  color: white;
 }
 
-.btn-edit:hover {
-  background: #4338ca;
-}
-
-/* Delete button */
 .btn-delete {
   background: #dc2626;
-  color: #ffffff;
-}
-
-.btn-delete:hover {
-  background: #b91c1c;
+  color: white;
 }
 
 /* =====================================================
-   ADMIN PROJECT CARDS
-   -----------------------------------------------------
-   - Grid layout
-   - Image + info + actions
+   ADMIN SECTIONS
+===================================================== */
+.admin-section {
+  margin-bottom: 60px;
+}
+
+/* =====================================================
+   ADMIN PROJECT GRID
+===================================================== */
+.admin-project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+/* =====================================================
+   ADMIN PROJECT CARD (SINGLE SOURCE OF TRUTH)
 ===================================================== */
 .admin-project-card {
   background: #f9fafb;
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 20px;
-  margin-bottom: 22px;
-  display: grid;
-  grid-template-columns: 140px 1fr auto;
-  gap: 20px;
-  align-items: center;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
 }
 
-/* Project thumbnail */
-.admin-project-image {
-  width: 140px;
-  height: 90px;
+/* Image */
+.admin-project-image,
+.admin-project-image.placeholder {
+  width: 100%;
+  height: 160px;
+  border-radius: 10px;
   object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
+  background: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  font-size: 0.85rem;
 }
 
-/* Project text */
-.admin-project-info h3 {
-  color: #4d4d4d;
-  margin-bottom: 6px;
+/* Text */
+.admin-project-card h3 {
+  font-size: 1.05rem;
 }
 
-.admin-project-info p {
-  font-size: 0.95rem;
-  color: #4d4d4d;
+.admin-project-card p {
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+.admin-project-card small {
+  color: #6b7280;
 }
 
 /* Tech badge */
 .tech-badge {
-  display: inline-block;
+  align-self: flex-start;
   background: #eef2ff;
   color: #1e3a8a;
-  padding: 5px 12px;
+  padding: 4px 10px;
   border-radius: 999px;
-  font-size: 0.75rem;
-  margin-top: 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
 }
 
-/* Action buttons container */
+/* Demo badge */
+.demo-badge {
+  align-self: flex-start;
+  background: #16a34a;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+}
+
+/* Links (FIX CUT-OFF) */
+.admin-project-card a {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  color: #2563eb;
+  font-weight: 500;
+}
+
+/* Actions */
 .admin-actions {
   display: flex;
   gap: 10px;
+  margin-top: auto;
 }
 
 /* =====================================================
-   PROJECTS (PUBLIC VIEW)
+   PUBLIC PROJECT CARDS
 ===================================================== */
 .project-card {
   background: #f9fafb;
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 22px;
   margin-bottom: 26px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
 }
 
-.project-card h2 {
-  color: #4d4d4d;
+.project-card h3 {
+  color: #111827;
 }
 
 .project-card p {
-  color: #4d4d4d;
+  color: #374151;
 }
 
+/* Images */
 .project-card img {
   width: 100%;
-  max-height: 220px;
+  height: 220px;
   object-fit: cover;
   border-radius: 10px;
   margin-bottom: 16px;
+  background: #e5e7eb;
 }
 
-/* Links on projects */
+/* Links */
 .project-links a {
   color: #2563eb;
   font-weight: 600;
-  text-decoration: none;
+  margin-right: 12px;
 }
 
 .project-links a:hover {
@@ -269,65 +281,14 @@ textarea {
 }
 
 /* =====================================================
-   RESPONSIVE (MOBILE)
+   RESPONSIVE
 ===================================================== */
 @media (max-width: 800px) {
-  .admin-project-card {
+  .admin-project-grid {
     grid-template-columns: 1fr;
-    text-align: center;
-  }
-
-  .admin-project-image {
-    margin: 0 auto;
   }
 
   .admin-actions {
     justify-content: center;
   }
 }
-
-/* ================== ADMIN PROJECT CARD TEXT FIX ================== */
-/* This ensures readable text on white project cards */
-
-.admin-project-card h3 {
-  color: #111827; /* strong dark slate for titles */
-}
-
-.admin-project-card p {
-  color: #374151; /* readable dark gray for body text */
-}
-
-.admin-project-card small {
-  color: #6b7280; /* muted gray for meta text */
-}
-
-.admin-project-card .tech-badge {
-  background: #eef2ff;
-  color: #1e3a8a;
-}
-/* ===== Edit page tweaks (reuse admin card) ===== */
-
-.admin-project-card label {
-  display: block;
-  font-size: 0.8rem;
-  font-weight: 600;
-  margin: 12px 0 4px;
-  color: #374151;
-}
-
-.admin-project-card input,
-.admin-project-card textarea {
-  width: 100%;
-}
-
-/* Optional placeholder styling */
-.admin-project-image.placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #e5e7eb;
-  color: #6b7280;
-  font-size: 0.8rem;
-}
-
-
