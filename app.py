@@ -15,7 +15,6 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(os.path.join(BASE_DIR, "instance"), exist_ok=True)
 
-
 # ---------- DATABASE ----------
 def get_db():
     conn = sqlite3.connect(DATABASE)
