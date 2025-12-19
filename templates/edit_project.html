@@ -1,28 +1,59 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Edit Project</h1>
+<div class="container">
+  <h1>Edit Project</h1>
 
-<form method="POST"
-      action="{{ url_for('update_project', id=project.id) }}"
-      enctype="multipart/form-data">
+  <form method="POST"
+        action="{{ url_for('update_project', id=project.id) }}"
+        enctype="multipart/form-data"
+        class="admin-project-card edit-card">
 
-  <input name="title" value="{{ project.title }}" required>
-  <input name="tech" value="{{ project.tech }}">
-  <input name="github" value="{{ project.github }}">
-  <textarea name="description">{{ project.description }}</textarea>
+    <!-- IMAGE COLUMN -->
+    <div>
+      {% if project.image %}
+        <img src="{{ url_for('static', filename='uploads/' ~ project.image) }}"
+             class="admin-project-image"
+             alt="Project image">
+      {% else %}
+        <div class="admin-project-image placeholder">
+          No image
+        </div>
+      {% endif %}
 
-  {% if project.image %}
-    <p>Current Image:</p>
-    <img src="{{ url_for('static', filename='uploads/' ~ project.image) }}"
-         style="max-width:200px;">
-    <input type="hidden" name="current_image" value="{{ project.image }}">
-  {% endif %}
+      <label class="file-label">
+        Change Image
+        <input type="file" name="image">
+      </label>
+    </div>
 
-  <p>Change Image:</p>
-  <input type="file" name="image">
+    <!-- INFO COLUMN -->
+    <div class="admin-project-info">
+      <label>Title</label>
+      <input type="text" name="title" value="{{ project.title }}" required>
 
-  <button type="submit">Save Changes</button>
-</form>
+      <label>Tech</label>
+      <input type="text" name="tech" value="{{ project.tech }}">
+
+      <label>GitHub</label>
+      <input type="url" name="github" value="{{ project.github }}">
+
+      <label>Description</label>
+      <textarea name="description">{{ project.description }}</textarea>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="admin-actions">
+      <button type="submit" class="btn btn-primary">
+        Save Changes
+      </button>
+
+      <a href="{{ url_for('admin') }}" class="btn btn-delete">
+        Cancel
+      </a>
+    </div>
+
+  </form>
+</div>
 
 {% endblock %}
