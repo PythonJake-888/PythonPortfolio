@@ -140,10 +140,13 @@ def update_project(id):
     has_demo = 1 if request.form.get("has_demo") else 0
 
     conn = get_db()
+    image_url = request.form.get("image_url")
+
     conn.execute(
         """
         UPDATE projects
-        SET title=?, description=?, tech=?, github=?, image=?, has_demo=?
+        SET title=?, description=?, tech=?, github=?,
+            demo_url=?, image=?, image_url=?, has_demo=?
         WHERE id=?
         """,
         (
@@ -151,7 +154,9 @@ def update_project(id):
             request.form["description"],
             request.form["tech"],
             request.form["github"],
+            request.form.get("demo_url"),
             image_name,
+            image_url,
             has_demo,
             id,
         ),

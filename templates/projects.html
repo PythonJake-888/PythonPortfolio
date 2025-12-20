@@ -49,12 +49,14 @@
     <div class="project-card">
       <h3>{{ project.title }}</h3>
 
-      {% if project.image %}
-        <img
-          src="{{ url_for('static', filename='uploads/' ~ project.image) }}"
-          alt="{{ project.title }}"
-        >
-      {% endif %}
+      {% if project.image_url %}
+  <img src="{{ project.image_url }}" alt="{{ project.title }}">
+{% elif project.image %}
+  <img src="{{ url_for('static', filename='uploads/' ~ project.image) }}" alt="{{ project.title }}">
+{% else %}
+  <div class="admin-project-image placeholder">No Image</div>
+{% endif %}
+
 
       <p>{{ project.description }}</p>
 
