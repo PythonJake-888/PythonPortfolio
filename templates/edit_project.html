@@ -5,42 +5,36 @@
 
 <form method="POST"
       action="{{ url_for('update_project', id=project.id) }}"
-      enctype="multipart/form-data"
       class="edit-form">
 
   <input name="title" value="{{ project.title }}" required>
-  <input name="tech" value="{{ project.tech }}">
-  <input name="github" value="{{ project.github }}">
-  <input name="demo_url" value="{{ project.demo_url }}">
-
-    <input
-  type="url"
-  name="image_url"
-  value="{{ project.image_url }}"
-  placeholder="Image URL"
-/>
-
 
   <textarea name="description">{{ project.description }}</textarea>
 
-  <div class="checkbox-row">
-    <input type="checkbox" name="has_demo" id="has_demo"
+  <input name="tech" value="{{ project.tech }}">
+
+  <input name="github" value="{{ project.github }}">
+
+  <input name="demo_url" value="{{ project.demo_url }}">
+
+  <input
+    type="url"
+    name="image_url"
+    value="{{ project.image_url }}"
+    placeholder="Preview Image URL"
+  >
+
+  <label class="checkbox-row">
+    <input type="checkbox" name="has_demo"
            {% if project.has_demo %}checked{% endif %}>
-    <label for="has_demo">Has Live Demo</label>
-  </div>
-
-  {% if project.image %}
-    <img src="{{ url_for('static', filename='uploads/' ~ project.image) }}"
-         class="admin-project-image">
-    <input type="hidden" name="current_image" value="{{ project.image }}">
-  {% endif %}
-
-  <input type="file" name="image">
+    Has Live Demo
+  </label>
 
   <div class="form-actions">
-    <button type="submit" class="btn btn-primary">Save Changes</button>
-    <a href="{{ url_for('admin') }}" class="btn btn-edit">Cancel</a>
+    <button class="btn btn-primary">Save Changes</button>
+    <a href="{{ url_for('admin') }}" class="btn">Cancel</a>
   </div>
+
 </form>
 
 {% endblock %}

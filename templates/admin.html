@@ -3,54 +3,58 @@
 
 <h1>Admin – Projects</h1>
 
-<!-- ================= ADD PROJECT ================= -->
-<form method="POST"
-      action="{{ url_for('add_project') }}"
-      enctype="multipart/form-data"
-      class="admin-form">
+<!-- ADD PROJECT -->
+<form method="POST" action="{{ url_for('add_project') }}" class="admin-form">
 
   <input name="title" placeholder="Title" required>
-  <input name="tech" placeholder="Tech (e.g. Python, Pygame)">
-  <input name="github" placeholder="GitHub URL">
-  <input name="demo_url" placeholder="Live Demo URL (optional)">
 
-
-    <input
-    type="url"
-    name="image_url"
-    placeholder="Image URL (GitHub / Imgur / itch.io)"
-  >
   <textarea name="description" placeholder="Description"></textarea>
 
-  <div class="checkbox-row">
-    <input type="checkbox" name="has_demo" id="has_demo">
-    <label for="has_demo">Has Live Demo</label>
-  </div>
+  <input name="tech" placeholder="Tech (Python, Pygame, Flask)">
 
-  <input type="file" name="image">
+  <input name="github" placeholder="GitHub URL">
+
+  <input
+    type="url"
+    name="demo_url"
+    placeholder="Live Demo URL (itch.io, web build)"
+  >
+
+  <input
+    type="url"
+    name="image_url"
+    placeholder="Preview Image URL (GitHub / Imgur / itch.io)"
+  >
+
+  <label class="checkbox-row">
+    <input type="checkbox" name="has_demo">
+    Has Live Demo
+  </label>
 
   <div class="form-actions">
     <button type="submit" class="btn btn-primary">Add Project</button>
   </div>
+
 </form>
 
 <hr>
 
-<!-- ================= EXISTING PROJECTS ================= -->
+<!-- EXISTING PROJECTS -->
 <div class="admin-project-grid">
+
 {% for project in projects %}
   <div class="admin-project-card">
 
-    {% if project.image_url %}
-  <img src="{{ project.image_url }}" alt="{{ project.title }}">
-{% elif project.image %}
-  <img src="{{ url_for('static', filename='uploads/' ~ project.image) }}" alt="{{ project.title }}">
-{% else %}
-  <div class="admin-project-image placeholder">No Image</div>
-{% endif %}
-
-
     <h3>{{ project.title }}</h3>
+
+    {% if project.image_url %}
+      <img
+        src="{{ project.image_url }}"
+        alt="{{ project.title }}"
+        class="admin-project-image"
+      >
+    {% endif %}
+
     <p>{{ project.description }}</p>
 
     {% if project.tech %}
@@ -58,32 +62,36 @@
     {% endif %}
 
     {% if project.has_demo %}
-      <span class="demo-badge">LIVE DEMO</span>
+      <span class="demo-badge">Live Demo</span>
     {% endif %}
 
     <div class="project-links">
       {% if project.github %}
         <a href="{{ project.github }}" target="_blank">GitHub</a>
       {% endif %}
-      {% if project.demo_url %}
+
+      {% if project.has_demo and project.demo_url %}
         <a href="{{ project.demo_url }}" target="_blank">Live Demo</a>
       {% endif %}
     </div>
 
     <div class="admin-actions">
-      <a href="{{ url_for('edit_project', id=project.id) }}"
-         class="btn btn-edit">Edit</a>
+      <a href="{{ url_for('edit_project', id=project.id) }}" class="btn btn-edit">
+        Edit
+      </a>
 
-      <form method="POST"
-            action="{{ url_for('delete_project', id=project.id) }}"
-            onsubmit="return confirm('Delete this project?');">
-        <button type="submit" class="btn btn-delete">Delete</button>
+      <form
+        method="POST"
+        action="{{ url_for('delete_project', id=project.id) }}"
+        onsubmit="return confirm('Delete this project?');"
+      >
+        <button class="btn btn-delete">Delete</button>
       </form>
     </div>
 
   </div>
 {% endfor %}
+
 </div>
 
 {% endblock %}
-
