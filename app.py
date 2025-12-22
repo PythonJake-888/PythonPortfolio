@@ -77,33 +77,22 @@ def admin():
 
 @app.route("/admin/add", methods=["POST"])
 def add_project():
-    if not session.get("admin"):
-        return redirect(url_for("login"))
-
-    image_file = request.files.get("image")
-    image_name = None
-
-    if image_file and image_file.filename:
-        image_name = secure_filename(image_file.filename)
-        image_file.save(os.path.join(app.config["UPLOAD_FOLDER"], image_name))
-
+    title = request.form.get("title")
+    description = request.form.get("description")
+    tech = request.form.get("tech")
+    github = request.form.get("github")
+    demo_url = request.form.get("demo_url")
+    image_url = request.form.get("image_url")
     has_demo = 1 if request.form.get("has_demo") else 0
 
-    conn = get_db()
+    conn = sqlite3.connect("projects.db")
     conn.execute(
         """
-        INSERT INTO projects (title, description, tech, github, demo_url, image, has_demo)
+        INSERT INTO projects
+        (title, description, tech, github, demo_url, image_url, has_demo)
         VALUES (?, ?, ?, ?, ?, ?, ?)
         """,
-        (
-            request.form["title"],
-            request.form["description"],
-            request.form["tech"],
-            request.form["github"],
-            request.form["demo_url"],
-            image_name,
-            has_demo,
-        ),
+        (title, description, tech, github, demo_url, image_url, has_demo)
     )
     conn.commit()
     conn.close()

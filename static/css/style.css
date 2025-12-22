@@ -76,7 +76,6 @@ h3 {
   padding: 28px;
   margin-bottom: 60px;
   box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-  max-width: 100%;
 }
 
 /* Inputs */
@@ -100,7 +99,7 @@ textarea {
 }
 
 /* =====================================================
-   CHECKBOX ROW (FIXED ALIGNMENT)
+   CHECKBOX ROW
 ===================================================== */
 .checkbox-row {
   display: flex;
@@ -147,13 +146,6 @@ textarea {
 }
 
 /* =====================================================
-   ADMIN SECTIONS
-===================================================== */
-.admin-section {
-  margin-bottom: 60px;
-}
-
-/* =====================================================
    ADMIN PROJECT GRID
 ===================================================== */
 .admin-project-grid {
@@ -163,7 +155,7 @@ textarea {
 }
 
 /* =====================================================
-   ADMIN PROJECT CARD (SINGLE SOURCE OF TRUTH)
+   ADMIN PROJECT CARD
 ===================================================== */
 .admin-project-card {
   background: #f9fafb;
@@ -174,37 +166,52 @@ textarea {
   gap: 12px;
   box-shadow: 0 12px 30px rgba(0,0,0,0.12);
 }
+/* =====================================================
+   ADMIN TEXT COLOR FIX
+===================================================== */
 
-/* Image */
-.admin-project-image,
-.admin-project-image.placeholder {
-  width: 100%;
-  height: 160px;
-  border-radius: 10px;
-  object-fit: cover;
-  background: #e5e7eb;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #6b7280;
-  font-size: 0.85rem;
-}
-
-/* Text */
-.admin-project-card h3 {
-  font-size: 1.05rem;
+.admin-form,
+.admin-project-card {
+  color: #111827; /* dark text */
 }
 
 .admin-project-card p {
   color: #374151;
-  font-size: 0.9rem;
 }
 
 .admin-project-card small {
   color: #6b7280;
 }
 
-/* Tech badge */
+.admin-project-card h3 {
+  color: #111827;
+}
+
+/* =====================================================
+   IMAGE WRAPPER (SINGLE SOURCE OF TRUTH)
+===================================================== */
+.image-wrapper {
+  width: 100%;
+  height: 200px;
+  background: #e5e7eb;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.image-wrapper img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+/* =====================================================
+   BADGES
+===================================================== */
 .tech-badge {
   align-self: flex-start;
   background: #eef2ff;
@@ -215,7 +222,6 @@ textarea {
   font-weight: 600;
 }
 
-/* Demo badge */
 .demo-badge {
   align-self: flex-start;
   background: #16a34a;
@@ -223,21 +229,6 @@ textarea {
   padding: 4px 10px;
   border-radius: 999px;
   font-size: 0.7rem;
-}
-
-/* Links (FIX CUT-OFF) */
-.admin-project-card a {
-  word-break: break-word;
-  overflow-wrap: anywhere;
-  color: #2563eb;
-  font-weight: 500;
-}
-
-/* Actions */
-.admin-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: auto;
 }
 
 /* =====================================================
@@ -252,24 +243,16 @@ textarea {
 }
 
 .project-card h3 {
-  color: #111827;
+  margin-bottom: 8px;
 }
 
 .project-card p {
   color: #374151;
 }
 
-/* Images */
-.project-card img {
-  width: 100%;
-  height: 220px;
-  object-fit: cover;
-  border-radius: 10px;
-  margin-bottom: 16px;
-  background: #e5e7eb;
-}
-
-/* Links */
+/* =====================================================
+   PROJECT LINKS
+===================================================== */
 .project-links a {
   color: #2563eb;
   font-weight: 600;
@@ -281,73 +264,29 @@ textarea {
 }
 
 /* =====================================================
-   RESPONSIVE
+   RESPONSIVE (MOBILE FIX)
 ===================================================== */
-@media (max-width: 800px) {
+@media (max-width: 768px) {
+
+  .container {
+    max-width: 100%;
+    padding: 0 16px;
+  }
+
   .admin-project-grid {
     grid-template-columns: 1fr;
   }
 
-  .admin-actions {
-    justify-content: center;
+  .image-wrapper {
+    height: 280px;
   }
-}
-
-/* =====================================================
-   Image Wrapper
-===================================================== */
-.image-wrapper {
-  width: 100%;
-  height: 180px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.project-image {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
-
-/* ===== PROJECT IMAGE FIX (DO NOT REMOVE) ===== */
-
-.project-card .image-wrapper {
-  width: 100%;
-  height: 180px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.project-card .image-wrapper img {
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
-  object-fit: contain !important;
-}
-/* ===== MOBILE PROJECT CARD FIX ===== */
-@media (max-width: 768px) {
 
   .project-card {
     width: 100%;
   }
 
-  .project-card .image-wrapper {
-    height: 240px; /* taller on phones */
-  }
-
-  .project-card h3 {
-    font-size: 1.2rem;
-  }
-
-  .project-card p {
-    font-size: 0.95rem;
+  h1 {
+    font-size: 1.7rem;
   }
 
 }
-
-
