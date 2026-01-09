@@ -151,6 +151,14 @@ def reset_db():
         db.drop_all()
         db.create_all()
     return "Database reset OK"
+@app.route("/__hard_reset")
+def hard_reset():
+    from sqlalchemy import text
+    db.session.execute(text("DROP TABLE IF EXISTS project CASCADE"))
+    db.session.execute(text("DROP TABLE IF EXISTS blog_post CASCADE"))
+    db.create_all()
+    db.session.commit()
+    return "Hard reset OK"
 
 if __name__ == "__main__":
     app.run(debug=True)
