@@ -1,29 +1,57 @@
 import os
-import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.utils import secure_filename
+from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
-# ---------- APP SETUP ----------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_FOLDER = os.path.join(BASE_DIR, "static", "uploads")
-DATABASE = os.path.join(BASE_DIR, "instance", "portfolio.db")
 
-app = Flask(__name__)
-app.secret_key = "dev-secret"
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+# Render-safe persistent disk
+UPLOAD_FOLDER = os.environ.get("UPLOAD_FOLDER", os.path.join(BASE_DIR, "static", "uploads"))
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-os.makedirs(os.path.join(BASE_DIR, "instance"), exist_ok=True)
 
-# ---------- DATABASE ----------
-def get_db():
-    conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row
-    return conn
+# Database (SQLite locally, PostgreSQL on Render)
+db_url = os.environ.get("DATABASE_URL")
+if db_url and db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://")
+
+DATABASE_URI = db_url or "sqlite:///portfolio.db"
+
+app = Flask(__name__)
+app.secret_key = os.environ.get("SECRET_KEY", "dev-secret")
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+db = SQLAlchemy(app)
+
+# ---------- MODELS ----------
+class Project(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200))
+    description = db.Column(db.Text)
+    tech = db.Column(db.String(200))
+    github = db.Column(db.String(200))
+    demo_url = db.Column(db.String(200))
+    image = db.Column(db.String(200))
+    image_url = db.Column(db.String(200))
+    has_demo = db.Column(db.Boolean, default=False)
+
+class BlogPost(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200))
+    slug = db.Column(db.String(200), unique=True)
+    body = db.Column(db.Text)
+    image = db.Column(db.String(200))
+    created = db.Column(db.DateTime, default=datetime.utcnow)
+
+with app.app_context():
+    db.create_all()
 
 # ---------- AUTH ----------
-ADMIN_USER = "admin"
-ADMIN_PASS = "password"
+ADMIN_USER = os.environ.get("ADMIN_USER", "admin")
+ADMIN_PASS = os.environ.get("ADMIN_PASS", "password")
 
 # ---------- ROUTES ----------
 @app.route("/")
@@ -32,32 +60,26 @@ def home():
 
 @app.route("/projects")
 def projects():
-    conn = get_db()
-    demo_projects = conn.execute(
-        "SELECT * FROM projects WHERE has_demo = 1"
-    ).fetchall()
-    code_projects = conn.execute(
-        "SELECT * FROM projects WHERE has_demo = 0"
-    ).fetchall()
-    conn.close()
-
-    return render_template(
-        "projects.html",
-        demo_projects=demo_projects,
-        code_projects=code_projects
-    )
+    demo_projects = Project.query.filter_by(has_demo=True).all()
+    code_projects = Project.query.filter_by(has_demo=False).all()
+    return render_template("projects.html", demo_projects=demo_projects, code_projects=code_projects)
 
 @app.route("/blog")
 def blog():
-    return render_template("blog.html")
+    posts = BlogPost.query.order_by(BlogPost.created.desc()).all()
+    return render_template("blog.html", posts=posts)
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/blog/<slug>")
+def blog_post(slug):
+    post = BlogPost.query.filter_by(slug=slug).first_or_404()
+    return render_template("blog_post.html", post=post)
+
+@app.route("/login", methods=["GET","POST"])
 def login():
     if request.method == "POST":
         if request.form["username"] == ADMIN_USER and request.form["password"] == ADMIN_PASS:
             session["admin"] = True
             return redirect(url_for("admin"))
-        return render_template("login.html", error="Invalid credentials")
     return render_template("login.html")
 
 @app.route("/logout")
@@ -69,103 +91,57 @@ def logout():
 def admin():
     if not session.get("admin"):
         return redirect(url_for("login"))
+    projects = Project.query.all()
+    posts = BlogPost.query.all()
+    return render_template("admin.html", projects=projects, posts=posts)
 
-    conn = get_db()
-    projects = conn.execute("SELECT * FROM projects").fetchall()
-    conn.close()
-    return render_template("admin.html", projects=projects)
-
-@app.route("/admin/add", methods=["POST"])
+@app.route("/admin/project/add", methods=["POST"])
 def add_project():
-    title = request.form.get("title")
-    description = request.form.get("description")
-    tech = request.form.get("tech")
-    github = request.form.get("github")
-    demo_url = request.form.get("demo_url")
-    image_url = request.form.get("image_url")
-    has_demo = 1 if request.form.get("has_demo") else 0
-
-    conn = sqlite3.connect("projects.db")
-    conn.execute(
-        """
-        INSERT INTO projects
-        (title, description, tech, github, demo_url, image_url, has_demo)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-        """,
-        (title, description, tech, github, demo_url, image_url, has_demo)
+    has_demo = bool(request.form.get("has_demo"))
+    p = Project(
+        title=request.form["title"],
+        description=request.form["description"],
+        tech=request.form["tech"],
+        github=request.form["github"],
+        demo_url=request.form.get("demo_url"),
+        image_url=request.form.get("image_url"),
+        has_demo=has_demo
     )
-    conn.commit()
-    conn.close()
-
+    db.session.add(p)
+    db.session.commit()
     return redirect(url_for("admin"))
 
-
-
-@app.route("/admin/edit/<int:id>")
-def edit_project(id):
-    if not session.get("admin"):
-        return redirect(url_for("login"))
-
-    conn = get_db()
-    project = conn.execute(
-        "SELECT * FROM projects WHERE id = ?", (id,)
-    ).fetchone()
-    conn.close()
-
-    return render_template("edit_project.html", project=project)
-
-@app.route("/admin/update/<int:id>", methods=["POST"])
-def update_project(id):
-    if not session.get("admin"):
-        return redirect(url_for("login"))
-
-    image_file = request.files.get("image")
-    image_name = request.form.get("current_image")
-
-    if image_file and image_file.filename:
-        image_name = secure_filename(image_file.filename)
-        image_file.save(os.path.join(app.config["UPLOAD_FOLDER"], image_name))
-
-    has_demo = 1 if request.form.get("has_demo") else 0
-
-    conn = get_db()
-    image_url = request.form.get("image_url")
-
-    conn.execute(
-        """
-        UPDATE projects
-        SET title=?, description=?, tech=?, github=?,
-            demo_url=?, image=?, image_url=?, has_demo=?
-        WHERE id=?
-        """,
-        (
-            request.form["title"],
-            request.form["description"],
-            request.form["tech"],
-            request.form["github"],
-            request.form.get("demo_url"),
-            image_name,
-            image_url,
-            has_demo,
-            id,
-        ),
-    )
-    conn.commit()
-    conn.close()
-
-    return redirect(url_for("admin"))
-
-@app.route("/admin/delete/<int:id>", methods=["POST"])
+@app.route("/admin/project/delete/<int:id>")
 def delete_project(id):
-    if not session.get("admin"):
-        return redirect(url_for("login"))
+    Project.query.filter_by(id=id).delete()
+    db.session.commit()
+    return redirect(url_for("admin"))
 
-    conn = get_db()
-    conn.execute("DELETE FROM projects WHERE id = ?", (id,))
-    conn.commit()
-    conn.close()
+@app.route("/admin/blog/add", methods=["POST"])
+def add_blog():
+    from slugify import slugify
+    image_file = request.files.get("image")
+    filename = None
+    if image_file and image_file.filename:
+        filename = secure_filename(image_file.filename)
+        image_file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
 
+    post = BlogPost(
+        title=request.form["title"],
+        slug=slugify(request.form["title"]),
+        body=request.form["body"],
+        image=filename
+    )
+    db.session.add(post)
+    db.session.commit()
+    return redirect(url_for("admin"))
+
+@app.route("/admin/blog/delete/<int:id>")
+def delete_blog(id):
+    BlogPost.query.filter_by(id=id).delete()
+    db.session.commit()
     return redirect(url_for("admin"))
 
 if __name__ == "__main__":
     app.run(debug=True)
+

@@ -1,6 +1,19 @@
 {% extends "base.html" %}
-{% block title %}Home{% endblock %}
+
+
 {% block content %}
-<h1>Jake Clark</h1>
-<p>Python developer building games and applications.</p>
+<section class="hero">
+  <h1>Jacob Clark</h1>
+  <p class="subtitle">Python Developer & Game Dev</p>
+
+  <p>
+    I build games, tools, and automation projects using Python, Flask, and modern development workflows.
+    This site showcases my work, experiments, and dev blog as I transition into full-time software development.
+  </p>
+
+  <div class="hero-actions">
+    <a href="{{ url_for('projects') }}" class="btn">View Projects</a>
+    <a href="{{ url_for('blog') }}" class="btn secondary">Read the Dev Blog</a>
+  </div>
+</section>
 {% endblock %}

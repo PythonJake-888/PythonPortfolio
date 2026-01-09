@@ -1,10 +1,12 @@
-<!-- templates/base.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ title or "Portfolio" }}</title>
+
+  <title>{% block title %}Jacob Clark | Developer{% endblock %}</title>
+  <meta name="description" content="Python developer portfolio, game dev projects, and development blog.">
+
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
@@ -26,6 +28,10 @@
 <main class="container">
   {% block content %}{% endblock %}
 </main>
+
+<footer class="footer">
+  © 2026 Jacob Clark
+</footer>
 
 </body>
 </html>

@@ -1,9 +1,13 @@
 {% extends "base.html" %}
+
+
 {% block content %}
 
-<h1>Admin – Projects</h1>
+<h1>Admin Dashboard</h1>
 
-<!-- ADD PROJECT -->
+<!-- ================= ADD PROJECT ================= -->
+<h2>Add Project</h2>
+
 <form method="POST" action="{{ url_for('add_project') }}" class="admin-form">
 
   <input name="title" placeholder="Title" required>
@@ -14,32 +18,38 @@
 
   <input name="github" placeholder="GitHub URL">
 
-  <input
-    type="url"
-    name="demo_url"
-    placeholder="Live Demo URL (itch.io, web build)"
-  >
+  <input type="url" name="demo_url" placeholder="Live Demo URL (itch.io, web build)">
 
-  <input
-    type="url"
-    name="image_url"
-    placeholder="Preview Image URL (GitHub / Imgur / itch.io)"
-  >
+  <input type="url" name="image_url" placeholder="Preview Image URL">
 
   <label class="checkbox-row">
     <input type="checkbox" name="has_demo">
     Has Live Demo
   </label>
 
-  <div class="form-actions">
-    <button type="submit" class="btn btn-primary">Add Project</button>
-  </div>
-
+  <button type="submit" class="btn btn-primary">Add Project</button>
 </form>
 
 <hr>
 
-<!-- EXISTING PROJECTS -->
+<!-- ================= ADD BLOG POST ================= -->
+<h2>Add Blog Post</h2>
+
+<form method="POST" action="{{ url_for('add_blog') }}" enctype="multipart/form-data" class="admin-form">
+
+  <input name="title" placeholder="Post Title" required>
+
+  <textarea name="body" placeholder="Write your post here..." rows="6" required></textarea>
+
+  <input type="file" name="image">
+
+  <button type="submit" class="btn btn-primary">Publish Post</button>
+</form>
+
+<hr>
+
+<!-- ================= EXISTING PROJECTS ================= -->
+<h2>Projects</h2>
 <div class="admin-project-grid">
 
 {% for project in projects %}
@@ -48,15 +58,10 @@
     <h3>{{ project.title }}</h3>
 
     {% if project.image_url %}
-  <div class="image-wrapper">
-    <img
-      src="{{ project.image_url }}"
-      alt="{{ project.title }}"
-      class="project-image"
-    >
-  </div>
-{% endif %}
-
+      <div class="image-wrapper">
+        <img src="{{ project.image_url }}" alt="{{ project.title }}" class="project-image">
+      </div>
+    {% endif %}
 
     <p>{{ project.description }}</p>
 
@@ -72,29 +77,31 @@
       {% if project.github %}
         <a href="{{ project.github }}" target="_blank">GitHub</a>
       {% endif %}
-
       {% if project.has_demo and project.demo_url %}
         <a href="{{ project.demo_url }}" target="_blank">Live Demo</a>
       {% endif %}
     </div>
 
     <div class="admin-actions">
-      <a href="{{ url_for('edit_project', id=project.id) }}" class="btn btn-edit">
-        Edit
-      </a>
+      <a href="{{ url_for('edit_project', id=project.id) }}" class="btn btn-edit">Edit</a>
 
-      <form
-        method="POST"
-        action="{{ url_for('delete_project', id=project.id) }}"
-        onsubmit="return confirm('Delete this project?');"
-      >
+      <form method="POST" action="{{ url_for('delete_project', id=project.id) }}" onsubmit="return confirm('Delete this project?');">
         <button class="btn btn-delete">Delete</button>
       </form>
     </div>
 
   </div>
 {% endfor %}
-
 </div>
 
+<!-- ================= EXISTING BLOG POSTS ================= -->
+<h2>Blog Posts</h2>
+{% for post in posts %}
+  <div class="admin-blog-row">
+    {{ post.title }}
+    <a href="{{ url_for('delete_blog', id=post.id) }}">Delete</a>
+  </div>
+{% endfor %}
+
 {% endblock %}
+

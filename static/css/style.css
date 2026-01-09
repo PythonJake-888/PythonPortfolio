@@ -1,292 +1,185 @@
-/* =====================================================
-   GLOBAL RESET
-===================================================== */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+:root {
+  --bg: #0f172a;
+  --panel: #020617;
+  --card: #020617;
+  --text: #e5e7eb;
+  --muted: #94a3b8;
+  --accent: #38bdf8;
+  --border: rgba(255,255,255,.06);
 }
 
-/* =====================================================
-   BODY
-===================================================== */
+* { box-sizing: border-box; }
+
 body {
-  background: #0f172a;
-  color: #e5e7eb;
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: radial-gradient(circle at top, #020617, #000);
+  color: var(--text);
   line-height: 1.6;
 }
 
-/* =====================================================
-   NAV
-===================================================== */
-nav {
-  background: #020617;
-  padding: 14px 24px;
+.navbar {
   display: flex;
-  align-items: center;
+  gap: 2rem;
+  padding: 1.2rem 3rem;
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(20px);
 }
 
-nav a {
-  color: #e5e7eb;
+.navbar a {
+  color: var(--text);
   text-decoration: none;
-  margin-right: 20px;
   font-weight: 500;
+  position: relative;
 }
 
-nav a:hover {
-  color: #ffffff;
-  text-decoration: underline;
+.navbar a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0%;
+  height: 2px;
+  background: var(--accent);
+  transition: .3s;
 }
 
-/* =====================================================
-   PAGE CONTAINER
-===================================================== */
+.navbar a:hover::after {
+  width: 100%;
+}
+
 .container {
   max-width: 1100px;
-  margin: 40px auto;
-  padding: 0 20px;
+  margin: auto;
+  padding: 4rem 2rem;
 }
 
-/* =====================================================
-   HEADINGS
-===================================================== */
-h1 {
-  font-size: 2rem;
-  margin-bottom: 24px;
-  color: #f9fafb;
-}
-
-h2 {
-  margin-bottom: 20px;
-  color: #f9fafb;
-}
-
-h3 {
-  color: #111827;
-}
-
-/* =====================================================
-   FORMS (ADMIN + EDIT)
-===================================================== */
-.admin-form,
-.edit-form {
-  background: #f9fafb;
-  border-radius: 14px;
-  padding: 28px;
-  margin-bottom: 60px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-}
-
-/* Inputs */
-.admin-form input,
-.admin-form textarea,
-.edit-form input,
-.edit-form textarea {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 14px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  font-size: 14px;
-  color: #111827;
-  background: #ffffff;
-}
-
-textarea {
-  resize: vertical;
-  min-height: 110px;
-}
-
-/* =====================================================
-   CHECKBOX ROW
-===================================================== */
-.checkbox-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 12px 0 20px;
-  color: #111827;
-}
-
-.checkbox-row input {
-  width: auto;
-}
-
-/* =====================================================
-   BUTTONS
-===================================================== */
-.btn {
-  padding: 10px 18px;
-  border-radius: 8px;
+h1, h2, h3 {
   font-weight: 600;
-  font-size: 0.9rem;
-  border: none;
-  cursor: pointer;
+  letter-spacing: .3px;
+}
+
+.hero {
+  padding: 4rem 0;
+}
+
+.hero .subtitle {
+  color: var(--accent);
+  font-size: 1.1rem;
+}
+
+.btn {
+  display: inline-block;
+  padding: .7rem 1.5rem;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+  color: black;
+  text-decoration: none;
+  font-weight: 600;
+  margin-right: .8rem;
+  transition: .2s;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(56,189,248,.3);
+}
+
+.projects-section {
+  margin: 4rem 0;
+}
+
+.project-card {
+  background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  transition: .3s;
+}
+
+.project-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 30px 80px rgba(0,0,0,.5);
+}
+
+.project-image {
+  width: 100%;
+  border-radius: 12px;
+  margin: 1rem 0;
+}
+
+.tech-badge {
+  background: rgba(56,189,248,.15);
+  color: #38bdf8;
+  padding: .3rem .7rem;
+  border-radius: 999px;
+  font-size: .75rem;
+  margin-right: .3rem;
+}
+
+.post-preview {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.post-preview h2 a {
+  color: var(--accent);
   text-decoration: none;
 }
 
-.btn-primary {
-  background: #2563eb;
-  color: white;
+.login-box, .admin-form {
+  max-width: 420px;
+  margin: auto;
+  background: rgba(255,255,255,.03);
+  padding: 2rem;
+  border-radius: 16px;
+  border: 1px solid var(--border);
 }
 
-.btn-primary:hover {
-  background: #1e4fd8;
+.footer {
+  text-align: center;
+  color: var(--muted);
+  padding: 3rem 1rem;
+  border-top: 1px solid var(--border);
+}
+/* === ADMIN DASHBOARD LAYOUT FIX === */
+
+.admin-form {
+  max-width: 520px;
+  margin: 0 auto 4rem auto;
 }
 
-.btn-edit {
-  background: #4f46e5;
-  color: white;
-}
-
-.btn-delete {
-  background: #dc2626;
-  color: white;
-}
-
-/* =====================================================
-   ADMIN PROJECT GRID
-===================================================== */
 .admin-project-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
 }
 
-/* =====================================================
-   ADMIN PROJECT CARD
-===================================================== */
 .admin-project-card {
-  background: #f9fafb;
-  border-radius: 14px;
-  padding: 20px;
+  min-height: 320px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+  justify-content: space-between;
 }
-/* =====================================================
-   ADMIN TEXT COLOR FIX
-===================================================== */
 
+/* Blog / project input cards */
 .admin-form,
-.admin-project-card {
-  color: #111827; /* dark text */
+.admin-blog-row {
+  background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+  padding: 2rem;
+  border-radius: 18px;
 }
 
-.admin-project-card p {
-  color: #374151;
-}
-
-.admin-project-card small {
-  color: #6b7280;
-}
-
-.admin-project-card h3 {
-  color: #111827;
-}
-
-/* =====================================================
-   IMAGE WRAPPER (SINGLE SOURCE OF TRUTH)
-===================================================== */
-.image-wrapper {
+/* Inputs breathe more */
+.admin-form input,
+.admin-form textarea {
   width: 100%;
-  height: 200px;
-  background: #e5e7eb;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.image-wrapper img {
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-}
-
-/* =====================================================
-   BADGES
-===================================================== */
-.tech-badge {
-  align-self: flex-start;
-  background: #eef2ff;
-  color: #1e3a8a;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 0.7rem;
-  font-weight: 600;
-}
-
-.demo-badge {
-  align-self: flex-start;
-  background: #16a34a;
+  margin-bottom: 1rem;
+  padding: .6rem .8rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,.3);
   color: white;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 0.7rem;
-}
-
-/* =====================================================
-   PUBLIC PROJECT CARDS
-===================================================== */
-.project-card {
-  background: #f9fafb;
-  border-radius: 14px;
-  padding: 22px;
-  margin-bottom: 26px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
-}
-
-.project-card h3 {
-  margin-bottom: 8px;
-}
-
-.project-card p {
-  color: #374151;
-}
-
-/* =====================================================
-   PROJECT LINKS
-===================================================== */
-.project-links a {
-  color: #2563eb;
-  font-weight: 600;
-  margin-right: 12px;
-}
-
-.project-links a:hover {
-  text-decoration: underline;
-}
-
-/* =====================================================
-   RESPONSIVE (MOBILE FIX)
-===================================================== */
-@media (max-width: 768px) {
-
-  .container {
-    max-width: 100%;
-    padding: 0 16px;
-  }
-
-  .admin-project-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .image-wrapper {
-    height: 280px;
-  }
-
-  .project-card {
-    width: 100%;
-  }
-
-  h1 {
-    font-size: 1.7rem;
-  }
-
 }

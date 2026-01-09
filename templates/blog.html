@@ -1,7 +1,27 @@
 {% extends "base.html" %}
-{% block title %}Blog{% endblock %}
+
 
 {% block content %}
-<h1>Blog</h1>
-<p>Blog posts coming soon.</p>
+<h1>Dev Blog</h1>
+
+{% if posts %}
+  {% for post in posts %}
+    <div class="post-preview">
+      <h2>
+        <a href="{{ url_for('blog_post', slug=post.slug) }}">
+          {{ post.title }}
+        </a>
+      </h2>
+      <p class="post-date">
+        {{ post.created.strftime("%b %d, %Y") }}
+      </p>
+      {% if post.image %}
+        <img src="{{ url_for('static', filename='uploads/' ~ post.image) }}" class="post-thumb">
+      {% endif %}
+    </div>
+  {% endfor %}
+{% else %}
+  <p>No posts yet — check back soon.</p>
+{% endif %}
+
 {% endblock %}

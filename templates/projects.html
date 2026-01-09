@@ -1,48 +1,45 @@
 {% extends "base.html" %}
-{% block content %}
 
+{% block content %}
 <h1>Projects</h1>
 
 <!-- ================= LIVE DEMOS ================= -->
 <section class="projects-section">
   <h2>Live Demos</h2>
 
-  {% if demo_projects and demo_projects|length > 0 %}
+  {% if demo_projects|length > 0 %}
     {% for project in demo_projects %}
-  <div class="project-card">
+      <div class="project-card">
 
-    <h3>{{ project.title }}</h3>
+        <h3>{{ project.title }}</h3>
 
-    {% if project.image_url %}
-  <div class="image-wrapper">
-    <img
-      src="{{ project.image_url }}"
-      alt="{{ project.title }}"
-      class="project-image"
-    >
-  </div>
-{% endif %}
+        {% if project.image_url %}
+          <div class="image-wrapper">
+            <img
+              src="{{ project.image_url }}"
+              alt="{{ project.title }}"
+              class="project-image"
+            >
+          </div>
+        {% endif %}
 
+        <p>{{ project.description }}</p>
 
-    <p>{{ project.description }}</p>
+        {% if project.tech %}
+          <span class="tech-badge">{{ project.tech }}</span>
+        {% endif %}
 
-    {% if project.tech %}
-      <span class="tech-badge">{{ project.tech }}</span>
-    {% endif %}
+        <div class="project-links">
+          {% if project.github %}
+            <a href="{{ project.github }}" target="_blank">GitHub</a>
+          {% endif %}
+          {% if project.demo_url %}
+            <a href="{{ project.demo_url }}" target="_blank">Live Demo</a>
+          {% endif %}
+        </div>
 
-    <div class="project-links">
-      {% if project.github %}
-        <a href="{{ project.github }}" target="_blank">GitHub</a>
-      {% endif %}
-
-      {% if project.demo_url %}
-        <a href="{{ project.demo_url }}" target="_blank">Live Demo</a>
-      {% endif %}
-    </div>
-
-  </div>
-{% endfor %}
-
+      </div>
+    {% endfor %}
   {% else %}
     <p>No live demos available yet.</p>
   {% endif %}
@@ -54,38 +51,36 @@
 <section class="projects-section">
   <h2>Code Projects</h2>
 
-  {% if code_projects and code_projects|length > 0 %}
+  {% if code_projects|length > 0 %}
     {% for project in code_projects %}
-  <div class="project-card">
+      <div class="project-card">
 
-    <h3>{{ project.title }}</h3>
+        <h3>{{ project.title }}</h3>
 
-    {% if project.image_url %}
-      <img
-        src="{{ project.image_url }}"
-        alt="{{ project.title }}"
-        class="project-image"
-      >
-    {% endif %}
+        {% if project.image_url %}
+          <img
+            src="{{ project.image_url }}"
+            alt="{{ project.title }}"
+            class="project-image"
+          >
+        {% endif %}
 
-    <p>{{ project.description }}</p>
+        <p>{{ project.description }}</p>
 
-    {% if project.tech %}
-      <span class="tech-badge">{{ project.tech }}</span>
-    {% endif %}
+        {% if project.tech %}
+          <span class="tech-badge">{{ project.tech }}</span>
+        {% endif %}
 
-    <div class="project-links">
-      {% if project.github %}
-        <a href="{{ project.github }}" target="_blank">GitHub</a>
-      {% endif %}
-    </div>
+        <div class="project-links">
+          {% if project.github %}
+            <a href="{{ project.github }}" target="_blank">GitHub</a>
+          {% endif %}
+        </div>
 
-  </div>
-{% endfor %}
-
+      </div>
+    {% endfor %}
   {% else %}
     <p>No code projects available yet.</p>
   {% endif %}
 </section>
-
 {% endblock %}
