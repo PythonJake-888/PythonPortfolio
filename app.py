@@ -98,18 +98,22 @@ def admin():
 @app.route("/admin/project/add", methods=["POST"])
 def add_project():
     has_demo = bool(request.form.get("has_demo"))
+
     p = Project(
         title=request.form["title"],
         description=request.form["description"],
-        tech=request.form["tech"],
-        github=request.form["github"],
+        tech=request.form.get("tech"),
+        github=request.form.get("github"),
         demo_url=request.form.get("demo_url"),
+        image=None,
         image_url=request.form.get("image_url"),
         has_demo=has_demo
     )
+
     db.session.add(p)
     db.session.commit()
     return redirect(url_for("admin"))
+
 
 @app.route("/admin/project/delete/<int:id>")
 def delete_project(id):
