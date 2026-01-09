@@ -1,2 +1,6 @@
-Flask
+flask
+flask_sqlalchemy
+flask_wtf
+python-slugify
 gunicorn
+psycopg2-binary
