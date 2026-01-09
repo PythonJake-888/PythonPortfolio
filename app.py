@@ -145,6 +145,12 @@ def delete_blog(id):
     BlogPost.query.filter_by(id=id).delete()
     db.session.commit()
     return redirect(url_for("admin"))
+@app.route("/__reset_db")
+def reset_db():
+    with app.app_context():
+        db.drop_all()
+        db.create_all()
+    return "Database reset OK"
 
 if __name__ == "__main__":
     app.run(debug=True)
