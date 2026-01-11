@@ -92,7 +92,9 @@ def delete_project(id):
 
 @app.route("/admin/project/upload/<int:project_id>", methods=["POST"])
 def upload_project_media(project_id):
-    file = request.files["file"]
+    file = request.files.get("file")
+    if not file:
+        return redirect(url_for("admin"))
 
     result = cloudinary.uploader.upload(
         file,
@@ -109,8 +111,8 @@ def upload_project_media(project_id):
 
     db.session.add(media)
     db.session.commit()
-
     return redirect(url_for("admin"))
+
 
 @app.route("/admin/project/media/delete/<int:id>", methods=["POST"])
 def delete_project_media(id):
