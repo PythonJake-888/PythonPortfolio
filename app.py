@@ -40,7 +40,9 @@ class ProjectMedia(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     project_id = db.Column(db.Integer, db.ForeignKey("project.id"))
     url = db.Column(db.String(500))
+    public_id = db.Column(db.String(200))   # ← REQUIRED
     media_type = db.Column(db.String(20))
+
 
 class BlogPost(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -92,17 +94,37 @@ def delete_project(id):
 def upload_project_media(project_id):
     file = request.files["file"]
 
-    result = cloudinary.uploader.upload(file, resource_type="auto", folder="portfolio")
+    result = cloudinary.uploader.upload(
+        file,
+        resource_type="auto",
+        folder="portfolio"
+    )
 
     media = ProjectMedia(
         project_id=project_id,
         url=result["secure_url"],
-        media_type=result["resource_type"],
+        public_id=result["public_id"],
+        media_type=result["resource_type"]
     )
 
     db.session.add(media)
     db.session.commit()
+
     return redirect(url_for("admin"))
+
+@app.route("/admin/project/media/delete/<int:id>", methods=["POST"])
+def delete_project_media(id):
+    media = ProjectMedia.query.get_or_404(id)
+
+    cloudinary.uploader.destroy(
+        media.public_id,
+        resource_type=media.media_type
+    )
+
+    db.session.delete(media)
+    db.session.commit()
+    return redirect(url_for("admin"))
+
 @app.route("/admin/project/edit/<int:id>", methods=["GET", "POST"])
 def edit_project(id):
     project = Project.query.get_or_404(id)

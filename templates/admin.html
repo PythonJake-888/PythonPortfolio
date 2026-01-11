@@ -33,14 +33,38 @@
     </form>
 
     <div class="gallery">
-      {% for media in project.media %}
-        {% if media.media_type == "video" %}
-          <video src="{{ media.url }}" controls></video>
-        {% else %}
-          <img src="{{ media.url }}">
-        {% endif %}
-      {% endfor %}
-    </div>
+  {% for media in project.media %}
+    {% if media.media_type == "video" %}
+      <video
+        src="{{ media.url }}"
+        class="project-media"
+        controls>
+      </video>
+    {% else %}
+      <img
+        src="{{ media.url | replace('/upload/', '/upload/w_900,c_limit,q_auto,f_auto/') }}"
+        class="project-media">
+    {% endif %}
+  {% endfor %}
+</div>
+
+      <div class="gallery media-strip">
+{% for media in project.media %}
+  <div class="media-tile">
+    {% if media.media_type == "video" %}
+      <video src="{{ media.url }}" class="media-item" muted></video>
+    {% else %}
+      <img src="{{ media.url }}" class="media-item">
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('delete_project_media', id=media.id) }}">
+      <button class="btn btn-delete btn-sm">Delete</button>
+    </form>
+  </div>
+{% endfor %}
+</div>
+
+
 
     <form method="POST" action="{{ url_for('delete_project', id=project.id) }}">
 

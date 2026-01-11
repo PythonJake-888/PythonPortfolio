@@ -9,6 +9,40 @@
 
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+<!-- Lightbox -->
+<div id="lightbox" class="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img">
+  <video id="lightbox-video" controls></video>
+</div>
+
+<script>
+function openLightbox(src, type) {
+  const lb = document.getElementById("lightbox");
+  const img = document.getElementById("lightbox-img");
+  const vid = document.getElementById("lightbox-video");
+
+  lb.classList.add("active");
+
+  if (type === "video") {
+    img.style.display = "none";
+    vid.style.display = "block";
+    vid.src = src;
+  } else {
+    vid.style.display = "none";
+    img.style.display = "block";
+    img.src = src;
+  }
+}
+
+function closeLightbox() {
+  const lb = document.getElementById("lightbox");
+  const vid = document.getElementById("lightbox-video");
+
+  lb.classList.remove("active");
+  vid.pause();
+  vid.src = "";
+}
+</script>
 
 <body>
 
