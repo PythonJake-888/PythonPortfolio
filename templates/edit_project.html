@@ -1,40 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
-
 <h1>Edit Project</h1>
 
-<form method="POST"
-      action="{{ url_for('update_project', id=project.id) }}"
-      class="edit-form">
+<form method="POST" class="admin-form">
 
   <input name="title" value="{{ project.title }}" required>
-
   <textarea name="description">{{ project.description }}</textarea>
-
   <input name="tech" value="{{ project.tech }}">
-
   <input name="github" value="{{ project.github }}">
-
   <input name="demo_url" value="{{ project.demo_url }}">
-
-  <input
-    type="url"
-    name="image_url"
-    value="{{ project.image_url }}"
-    placeholder="Preview Image URL"
-  >
+  <input name="image_url" value="{{ project.image_url }}">
 
   <label class="checkbox-row">
-    <input type="checkbox" name="has_demo"
-           {% if project.has_demo %}checked{% endif %}>
+    <input type="checkbox" name="has_demo" {% if project.has_demo %}checked{% endif %}>
     Has Live Demo
   </label>
 
-  <div class="form-actions">
-    <button class="btn btn-primary">Save Changes</button>
-    <a href="{{ url_for('admin') }}" class="btn">Cancel</a>
-  </div>
-
+  <button class="btn btn-primary">Update Project</button>
 </form>
-
 {% endblock %}
+

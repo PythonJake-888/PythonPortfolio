@@ -1,165 +1,151 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for, session
-from werkzeug.utils import secure_filename
-from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-# Render-safe persistent disk
-UPLOAD_FOLDER = os.environ.get("UPLOAD_FOLDER", os.path.join(BASE_DIR, "static", "uploads"))
-
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-# Database (SQLite locally, PostgreSQL on Render)
-db_url = os.environ.get("DATABASE_URL")
-if db_url and db_url.startswith("postgres://"):
-    db_url = db_url.replace("postgres://", "postgresql://")
-
-DATABASE_URI = db_url or "sqlite:///portfolio.db"
+from flask import Flask, render_template, request, redirect, url_for
+from flask_sqlalchemy import SQLAlchemy
+import cloudinary
+import cloudinary.uploader
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "dev-secret")
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
+
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
+    "DATABASE_URL", "sqlite:///" + os.path.join(BASE_DIR, "portfolio.db")
+)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
 
-# ---------- MODELS ----------
+cloudinary.config(
+    cloud_name="dlfw0pag",
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+    secure=True
+)
+
+# ================= MODELS =================
+
 class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200))
     description = db.Column(db.Text)
     tech = db.Column(db.String(200))
-    github = db.Column(db.String(200))
-    demo_url = db.Column(db.String(200))
-    image = db.Column(db.String(200))
-    image_url = db.Column(db.String(200))
+    github = db.Column(db.String(300))
+    demo_url = db.Column(db.String(300))
     has_demo = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    media = db.relationship("ProjectMedia", backref="project", lazy=True, cascade="all,delete")
+
+class ProjectMedia(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    project_id = db.Column(db.Integer, db.ForeignKey("project.id"))
+    url = db.Column(db.String(500))
+    media_type = db.Column(db.String(20))
 
 class BlogPost(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200))
-    slug = db.Column(db.String(200), unique=True)
     body = db.Column(db.Text)
-    image = db.Column(db.String(200))
-    created = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-with app.app_context():
-    db.create_all()
+# ================= ROUTES =================
 
-# ---------- AUTH ----------
-ADMIN_USER = os.environ.get("ADMIN_USER", "admin")
-ADMIN_PASS = os.environ.get("ADMIN_PASS", "password")
-
-# ---------- ROUTES ----------
 @app.route("/")
 def home():
-    return render_template("home.html")
+    return render_template("home.html", projects=Project.query.all())
 
 @app.route("/projects")
 def projects():
-    demo_projects = Project.query.filter_by(has_demo=True).all()
-    code_projects = Project.query.filter_by(has_demo=False).all()
-    return render_template("projects.html", demo_projects=demo_projects, code_projects=code_projects)
+    return render_template("projects.html", projects=Project.query.all())
 
 @app.route("/blog")
 def blog():
-    posts = BlogPost.query.order_by(BlogPost.created.desc()).all()
-    return render_template("blog.html", posts=posts)
-
-@app.route("/blog/<slug>")
-def blog_post(slug):
-    post = BlogPost.query.filter_by(slug=slug).first_or_404()
-    return render_template("blog_post.html", post=post)
-
-@app.route("/login", methods=["GET","POST"])
-def login():
-    if request.method == "POST":
-        if request.form["username"] == ADMIN_USER and request.form["password"] == ADMIN_PASS:
-            session["admin"] = True
-            return redirect(url_for("admin"))
-    return render_template("login.html")
-
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect(url_for("home"))
+    return render_template("blog.html", posts=BlogPost.query.all())
 
 @app.route("/admin")
 def admin():
-    if not session.get("admin"):
-        return redirect(url_for("login"))
-    projects = Project.query.all()
-    posts = BlogPost.query.all()
-    return render_template("admin.html", projects=projects, posts=posts)
+    return render_template("admin.html", projects=Project.query.all(), posts=BlogPost.query.all())
+
+# ---------- PROJECT ----------
 
 @app.route("/admin/project/add", methods=["POST"])
 def add_project():
-    has_demo = bool(request.form.get("has_demo"))
-
     p = Project(
         title=request.form["title"],
         description=request.form["description"],
-        tech=request.form.get("tech"),
-        github=request.form.get("github"),
-        demo_url=request.form.get("demo_url"),
-        image=None,
-        image_url=request.form.get("image_url"),
-        has_demo=has_demo
+        tech=request.form["tech"],
+        github=request.form["github"],
+        demo_url=request.form["demo_url"],
+        has_demo="has_demo" in request.form,
     )
-
     db.session.add(p)
     db.session.commit()
     return redirect(url_for("admin"))
 
-
-@app.route("/admin/project/delete/<int:id>")
+@app.route("/admin/project/delete/<int:id>", methods=["POST"])
 def delete_project(id):
-    Project.query.filter_by(id=id).delete()
+    db.session.delete(Project.query.get_or_404(id))
     db.session.commit()
     return redirect(url_for("admin"))
+
+@app.route("/admin/project/upload/<int:project_id>", methods=["POST"])
+def upload_project_media(project_id):
+    file = request.files["file"]
+
+    result = cloudinary.uploader.upload(file, resource_type="auto", folder="portfolio")
+
+    media = ProjectMedia(
+        project_id=project_id,
+        url=result["secure_url"],
+        media_type=result["resource_type"],
+    )
+
+    db.session.add(media)
+    db.session.commit()
+    return redirect(url_for("admin"))
+@app.route("/admin/project/edit/<int:id>", methods=["GET", "POST"])
+def edit_project(id):
+    project = Project.query.get_or_404(id)
+
+    if request.method == "POST":
+        project.title = request.form["title"]
+        project.description = request.form["description"]
+        project.tech = request.form["tech"]
+        project.github = request.form["github"]
+        project.demo_url = request.form["demo_url"]
+        project.has_demo = "has_demo" in request.form
+        db.session.commit()
+        return redirect(url_for("admin"))
+
+    return render_template("edit_project.html", project=project)
+
+# ---------- BLOG ----------
 
 @app.route("/admin/blog/add", methods=["POST"])
 def add_blog():
-    from slugify import slugify
-    image_file = request.files.get("image")
-    filename = None
-    if image_file and image_file.filename:
-        filename = secure_filename(image_file.filename)
-        image_file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
-
-    post = BlogPost(
-        title=request.form["title"],
-        slug=slugify(request.form["title"]),
-        body=request.form["body"],
-        image=filename
-    )
-    db.session.add(post)
+    db.session.add(BlogPost(title=request.form["title"], body=request.form["body"]))
     db.session.commit()
     return redirect(url_for("admin"))
 
-@app.route("/admin/blog/delete/<int:id>")
+@app.route("/admin/blog/delete/<int:id>", methods=["POST"])
 def delete_blog(id):
-    BlogPost.query.filter_by(id=id).delete()
+    db.session.delete(BlogPost.query.get_or_404(id))
     db.session.commit()
     return redirect(url_for("admin"))
-@app.route("/__reset_db")
-def reset_db():
-    with app.app_context():
-        db.drop_all()
-        db.create_all()
-    return "Database reset OK"
-@app.route("/__hard_reset")
-def hard_reset():
-    from sqlalchemy import text
-    db.session.execute(text("DROP TABLE IF EXISTS project CASCADE"))
-    db.session.execute(text("DROP TABLE IF EXISTS blog_post CASCADE"))
+
+@app.route("/admin/blog/edit/<int:id>", methods=["GET", "POST"])
+def edit_blog(id):
+    post = BlogPost.query.get_or_404(id)
+    if request.method == "POST":
+        post.title = request.form["title"]
+        post.body = request.form["body"]
+        db.session.commit()
+        return redirect(url_for("admin"))
+    return render_template("edit_blog.html", post=post)
+
+# ================= INIT =================
+
+with app.app_context():
     db.create_all()
-    db.session.commit()
-    return "Hard reset OK"
 
 if __name__ == "__main__":
     app.run(debug=True)
-

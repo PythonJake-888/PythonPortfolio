@@ -1,107 +1,79 @@
 {% extends "base.html" %}
-
-
 {% block content %}
 
 <h1>Admin Dashboard</h1>
 
-<!-- ================= ADD PROJECT ================= -->
 <h2>Add Project</h2>
-
 <form method="POST" action="{{ url_for('add_project') }}" class="admin-form">
-
   <input name="title" placeholder="Title" required>
-
   <textarea name="description" placeholder="Description"></textarea>
-
-  <input name="tech" placeholder="Tech (Python, Pygame, Flask)">
-
+  <input name="tech" placeholder="Tech stack">
   <input name="github" placeholder="GitHub URL">
-
-  <input type="url" name="demo_url" placeholder="Live Demo URL (itch.io, web build)">
-
-  <input type="url" name="image_url" placeholder="Preview Image URL">
-
-  <label class="checkbox-row">
-    <input type="checkbox" name="has_demo">
-    Has Live Demo
-  </label>
-
-  <button type="submit" class="btn btn-primary">Add Project</button>
+  <input name="demo_url" placeholder="Live demo URL">
+  <label><input type="checkbox" name="has_demo"> Has Live Demo</label>
+  <button class="btn">Create Project</button>
 </form>
 
 <hr>
 
-<!-- ================= ADD BLOG POST ================= -->
-<h2>Add Blog Post</h2>
-
-<form method="POST" action="{{ url_for('add_blog') }}" enctype="multipart/form-data" class="admin-form">
-
-  <input name="title" placeholder="Post Title" required>
-
-  <textarea name="body" placeholder="Write your post here..." rows="6" required></textarea>
-
-  <input type="file" name="image">
-
-  <button type="submit" class="btn btn-primary">Publish Post</button>
-</form>
-
-<hr>
-
-<!-- ================= EXISTING PROJECTS ================= -->
 <h2>Projects</h2>
 <div class="admin-project-grid">
-
 {% for project in projects %}
   <div class="admin-project-card">
 
     <h3>{{ project.title }}</h3>
-
-    {% if project.image_url %}
-      <div class="image-wrapper">
-        <img src="{{ project.image_url }}" alt="{{ project.title }}" class="project-image">
-      </div>
-    {% endif %}
-
     <p>{{ project.description }}</p>
 
-    {% if project.tech %}
-      <span class="tech-badge">{{ project.tech }}</span>
-    {% endif %}
+    <form action="{{ url_for('upload_project_media', project_id=project.id) }}"
+          method="POST" enctype="multipart/form-data">
+      <input type="file" name="file" required>
+        <a href="{{ url_for('edit_project', id=project.id) }}" class="btn">Edit</a>
 
-    {% if project.has_demo %}
-      <span class="demo-badge">Live Demo</span>
-    {% endif %}
+      <button class="btn">Upload Media</button>
+    </form>
 
-    <div class="project-links">
-      {% if project.github %}
-        <a href="{{ project.github }}" target="_blank">GitHub</a>
-      {% endif %}
-      {% if project.has_demo and project.demo_url %}
-        <a href="{{ project.demo_url }}" target="_blank">Live Demo</a>
-      {% endif %}
+    <div class="gallery">
+      {% for media in project.media %}
+        {% if media.media_type == "video" %}
+          <video src="{{ media.url }}" controls></video>
+        {% else %}
+          <img src="{{ media.url }}">
+        {% endif %}
+      {% endfor %}
     </div>
 
-    <div class="admin-actions">
-      <a href="{{ url_for('edit_project', id=project.id) }}" class="btn btn-edit">Edit</a>
+    <form method="POST" action="{{ url_for('delete_project', id=project.id) }}">
 
-      <form method="POST" action="{{ url_for('delete_project', id=project.id) }}" onsubmit="return confirm('Delete this project?');">
-        <button class="btn btn-delete">Delete</button>
-      </form>
-    </div>
 
+      <button class="btn btn-delete">Delete Project</button>
+    </form>
   </div>
 {% endfor %}
 </div>
 
-<!-- ================= EXISTING BLOG POSTS ================= -->
+<hr>
+
+<h2>Add Blog Post</h2>
+<form method="POST" action="{{ url_for('add_blog') }}" class="admin-form">
+  <input name="title" placeholder="Post title" required>
+  <textarea name="body" placeholder="Post content" rows="6"></textarea>
+  <button class="btn">Publish</button>
+</form>
+
 <h2>Blog Posts</h2>
 {% for post in posts %}
   <div class="admin-blog-row">
-    {{ post.title }}
-    <a href="{{ url_for('delete_blog', id=post.id) }}">Delete</a>
+    <span>{{ post.title }}</span>
+
+    <div style="display:flex; gap:12px;">
+      <a href="{{ url_for('edit_blog', id=post.id) }}" class="btn">Edit</a>
+
+      <form method="POST" action="{{ url_for('delete_blog', id=post.id) }}">
+        <button class="btn btn-delete">Delete</button>
+      </form>
+    </div>
   </div>
 {% endfor %}
 
-{% endblock %}
 
+{% endblock %}

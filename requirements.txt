@@ -1,6 +1,6 @@
-flask
-flask_sqlalchemy
-flask_wtf
-python-slugify
-gunicorn
+Flask
+Flask-SQLAlchemy
 psycopg2-binary
+cloudinary
+gunicorn
+python-dotenv
