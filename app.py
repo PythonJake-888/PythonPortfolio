@@ -22,6 +22,7 @@ cloudinary.config(
     secure=True
 )
 
+print("Cloudinary cloud:", cloudinary.config().cloud_name)
 
 
 # ================= MODELS =================
