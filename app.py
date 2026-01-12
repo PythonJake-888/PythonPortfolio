@@ -22,6 +22,7 @@ cloudinary.config(
     secure=True
 )
 
+print("Cloudinary ENV:", os.environ["CLOUDINARY_CLOUD_NAME"])
 
 # ================= MODELS =================
 
