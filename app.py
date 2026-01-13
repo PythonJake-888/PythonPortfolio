@@ -347,7 +347,17 @@ def ensure_admin_user():
 
 with app.app_context():
     db.create_all()
-    ensure_admin_user()
+
+    # 🔧 Auto repair missing created_at column on Postgres
+    from sqlalchemy import text
+
+    try:
+        db.session.execute(text("ALTER TABLE project_media ADD COLUMN IF NOT EXISTS created_at TIMESTAMP"))
+        db.session.execute(text("UPDATE project_media SET created_at = NOW() WHERE created_at IS NULL"))
+        db.session.commit()
+    except Exception as e:
+        print("DB auto-repair:", e)
+
 
 
 if __name__ == "__main__":
