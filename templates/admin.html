@@ -53,14 +53,24 @@
       </form>
 
       <div class="gallery">
-        {% for media in project.media %}
-          {% if media.media_type == "video" %}
-            <video src="{{ media.url }}" class="project-media" controls></video>
-          {% else %}
-            <img src="{{ media.url }}" class="project-media">
-          {% endif %}
-        {% endfor %}
-      </div>
+  {% for media in project.media %}
+    <div class="media-tile">
+
+      {% if media.media_type == "video" %}
+        <video src="{{ media.url }}" class="project-media" controls></video>
+      {% else %}
+        <img src="{{ media.url }}" class="project-media"
+             onclick="openLightbox('{{ media.url }}','image')">
+      {% endif %}
+
+      <form method="POST" action="{{ url_for('delete_project_media', id=media.id) }}">
+        <button class="btn btn-delete btn-sm" type="submit">Delete Media</button>
+      </form>
+
+    </div>
+  {% endfor %}
+</div>
+
 
       <form method="POST" action="{{ url_for('delete_project', id=project.id) }}">
         <button class="btn btn-delete">Delete Project</button>
