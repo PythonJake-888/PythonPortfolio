@@ -4,3 +4,4 @@ psycopg2-binary
 cloudinary
 gunicorn
 python-dotenv
+Flask-Login
