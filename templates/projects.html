@@ -29,10 +29,15 @@
 
     <p class="tech-badge">{{ project.tech }}</p>
 
-    <div class="project-links">
-      {% if project.github %}<a href="{{ project.github }}" target="_blank">GitHub</a>{% endif %}
-      {% if project.has_demo %}<a href="{{ project.demo_url }}" target="_blank">Live Demo</a>{% endif %}
-    </div>
+    <div class="project-actions">
+  {% if project.github %}
+    <a href="{{ project.github }}" target="_blank" class="btn btn-outline">GitHub</a>
+  {% endif %}
+  {% if project.has_demo %}
+    <a href="{{ project.demo_url }}" target="_blank" class="btn btn-primary">Live Demo</a>
+  {% endif %}
+</div>
+
   </div>
 {% endfor %}
 </section>
