@@ -45,7 +45,7 @@
 
         <!-- Upload -->
         <form method="POST" enctype="multipart/form-data"
-              action="{{ url_for('upload_media', project_id=project.id) }}">
+              action="{{ url_for('upload_media', pid=project.id) }}">
           <input type="file" name="file" required>
 
           <div class="admin-actions">
@@ -66,7 +66,7 @@
                 <img src="{{ media.url }}" class="project-media">
               {% endif %}
 
-              <form method="POST" action="{{ url_for('delete_media', id=media.id) }}">
+              <form method="POST" action="{{ url_for('delete_media', mid=media.id) }}">
                 <button class="btn btn-delete btn-sm">Delete Media</button>
               </form>
 
@@ -75,7 +75,7 @@
         </div>
 
         <!-- Delete Project -->
-        <form method="POST" action="{{ url_for('delete_project', id=project.id) }}">
+        <form method="POST" action="{{ url_for('delete_project', mid=project.id) }}">
           <button class="btn btn-delete">Delete Project</button>
         </form>
 
