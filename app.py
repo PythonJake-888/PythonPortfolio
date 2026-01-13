@@ -272,16 +272,16 @@ def upload_project_media(project_id):
 def delete_project_media(id):
     media = ProjectMedia.query.get_or_404(id)
 
-    # delete from Cloudinary first
     try:
         cloudinary.uploader.destroy(media.public_id, resource_type=media.media_type)
     except Exception:
-        # don’t block UI if Cloudinary deletion fails; still remove DB row if you want
-        pass
+        pass   # ← Cloudinary may already be missing the file
 
     db.session.delete(media)
     db.session.commit()
     return redirect(url_for("admin"))
+
+
 
 
 # ---------- BLOG ----------
