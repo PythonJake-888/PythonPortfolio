@@ -216,3 +216,54 @@ img,video{max-width:100%;display:block}
   margin-top: 0;
   margin-bottom: 80px;    /* SPACE BETWEEN SECTIONS */
 }
+
+
+.admin-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 70px 24px 140px;
+}
+
+.admin-topbar {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:40px;
+}
+
+.admin-section { margin-bottom: 80px; }
+
+.admin-project-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+  gap:28px;
+}
+
+.admin-project-card {
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:20px;
+  padding:22px;
+}
+
+.admin-actions {
+  display:flex;
+  gap:14px;
+  margin:14px 0;
+}
+
+.project-media {
+  max-height:240px;
+  object-fit:contain;
+  margin-bottom:10px;
+}
+
+.admin-checkbox {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  grid-column:1 / -1;
+}
+
+#lightbox video { display:none !important; }
+#lightbox:not(.active) video { display:none !important; }
