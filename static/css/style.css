@@ -267,3 +267,22 @@ img,video{max-width:100%;display:block}
 
 #lightbox video { display:none !important; }
 #lightbox:not(.active) video { display:none !important; }
+.post-preview {
+  max-width: 820px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background: #111;
+  border-radius: 12px;
+  box-shadow: 0 0 30px rgba(0,0,0,.4);
+}
+
+.post-title {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.post-body {
+  white-space: pre-line;
+  line-height: 1.8;
+  font-size: 1.05rem;
+}
