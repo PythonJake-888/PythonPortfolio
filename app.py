@@ -223,6 +223,18 @@ def delete_blog(id):
     db.session.commit()
     return redirect(url_for("admin"))
 
+
+@app.route("/admin/blog/edit/<int:id>", methods=["GET","POST"])
+@login_required
+def edit_blog(id):
+    post = BlogPost.query.get_or_404(id)
+    if request.method == "POST":
+        post.title = request.form["title"]
+        post.body = request.form["body"]
+        db.session.commit()
+        return redirect(url_for("admin"))
+    return render_template("edit_blog.html", post=post)
+
 # ======================
 # FIRST ADMIN AUTO-CREATE
 # ======================
