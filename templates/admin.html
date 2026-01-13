@@ -63,7 +63,7 @@
              onclick="openLightbox('{{ media.url }}','image')">
       {% endif %}
 
-      <form method="POST" action="{{ url_for('delete_project_media', id=media.id) }}">
+      <form method="POST" action="{{ url_for('delete_media', id=media.id) }}">
         <button class="btn btn-delete btn-sm" type="submit">Delete Media</button>
       </form>
 
