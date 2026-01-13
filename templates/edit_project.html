@@ -1,32 +1,28 @@
 {% extends "base.html" %}
 {% block content %}
+<div class="admin-shell">
 
-<section class="admin-edit-wrap">
-  <h1>Edit Project</h1>
+<h1>Edit Project</h1>
 
-  <form method="POST" class="admin-form">
+<form method="POST" class="admin-form admin-grid">
 
-    <input name="title" value="{{ project.title }}" placeholder="Title" required>
+    <input name="title" value="{{ project.title }}" required>
+    <textarea name="description">{{ project.description }}</textarea>
 
-    <textarea name="description" placeholder="Description">{{ project.description }}</textarea>
+    <input name="tech" value="{{ project.tech }}">
+    <input name="github" value="{{ project.github }}">
+    <input name="demo_url" value="{{ project.demo_url }}">
 
-    <input name="tech" value="{{ project.tech }}" placeholder="Tech stack">
+    <label class="admin-checkbox">
+        <input type="checkbox" name="has_demo" {% if project.has_demo %}checked{% endif %}>
+        Has Live Demo
+    </label>
 
-    <input name="github" value="{{ project.github }}" placeholder="GitHub URL">
+    <div class="admin-actions">
+        <button class="btn">Save Changes</button>
+        <a href="{{ url_for('admin') }}" class="btn btn-outline">Cancel</a>
+    </div>
 
-    <input name="demo_url" value="{{ project.demo_url }}" placeholder="Live demo URL">
-
-    <div class="demo-row">
-  <label class="demo-toggle">
-    <input type="checkbox" name="has_demo" {% if project and project.has_demo %}checked{% endif %}>
-    <span>Has Live Demo</span>
-  </label>
+</form>
 </div>
-
-
-    <button class="btn btn-primary create-btn">Save Changes</button>
-  </form>
-</section>
-
-
 {% endblock %}

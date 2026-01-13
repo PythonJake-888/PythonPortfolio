@@ -134,6 +134,22 @@ def admin():
         projects=Project.query.order_by(Project.created_at.desc()).all(),
         posts=BlogPost.query.order_by(BlogPost.created_at.desc()).all()
     )
+@app.route("/admin/project/edit/<int:id>", methods=["GET", "POST"])
+@login_required
+def edit_project(id):
+    project = Project.query.get_or_404(id)
+
+    if request.method == "POST":
+        project.title = request.form["title"]
+        project.description = request.form["description"]
+        project.tech = request.form["tech"]
+        project.github = request.form["github"]
+        project.demo_url = request.form["demo_url"]
+        project.has_demo = "has_demo" in request.form
+        db.session.commit()
+        return redirect(url_for("admin"))
+
+    return render_template("edit_project.html", project=project)
 
 @app.route("/admin/project/add", methods=["POST"])
 @login_required
