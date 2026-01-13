@@ -1,109 +1,112 @@
 {% extends "base.html" %}
 {% block content %}
+
 <div class="admin-shell">
 
-<div class="admin-topbar">
-  <span>Logged in as {{ current_user.username }}</span>
-  <form method="POST" action="{{ url_for('logout') }}">
-    <button class="btn btn-sm">Logout</button>
-  </form>
-</div>
-
-<h1>Admin Dashboard</h1>
-
-<section class="admin-section">
-  <h2>Add Project</h2>
-
-  <form method="POST" action="{{ url_for('add_project') }}" class="admin-form admin-grid">
-
-    <input name="title" placeholder="Title" required>
-    <textarea name="description" placeholder="Description"></textarea>
-
-    <input name="tech" placeholder="Tech Stack">
-    <input name="github" placeholder="GitHub URL">
-    <input name="demo_url" placeholder="Live Demo URL">
-
-    <label class="admin-checkbox">
-      <input type="checkbox" name="has_demo">
-      Has Live Demo
-    </label>
-
-    <button class="btn admin-submit">Create Project</button>
-  </form>
-</section>
-
-<section class="admin-section">
-  <h2>Projects</h2>
-
-  <div class="admin-project-grid">
-  {% for project in projects %}
-    <div class="admin-project-card">
-
-      <h3>{{ project.title }}</h3>
-      <p>{{ project.description }}</p>
-
-      <form method="POST" enctype="multipart/form-data"
-            action="{{ url_for('upload_media', project_id=project.id) }}">
-        <input type="file" name="file" required>
-
-        <div class="admin-actions">
-          <a href="{{ url_for('edit_project', id=project.id) }}" class="btn">Edit</a>
-          <button class="btn">Upload Media</button>
-        </div>
-      </form>
-
-      <div class="gallery">
-  {% for media in project.media %}
-    <div class="media-tile">
-
-      {% if media.media_type == "video" %}
-        <video src="{{ media.url }}" class="project-media" controls></video>
-      {% else %}
-        <img src="{{ media.url }}" class="project-media"
-             onclick="openLightbox('{{ media.url }}','image')">
-      {% endif %}
-
-      <form method="POST" action="{{ url_for('delete_media', id=media.id) }}">
-        <button class="btn btn-delete btn-sm" type="submit">Delete Media</button>
-      </form>
-
-    </div>
-  {% endfor %}
-</div>
-
-
-      <form method="POST" action="{{ url_for('delete_media', id=media.id)
- }}">
-        <button class="btn btn-delete">Delete Project</button>
-      </form>
-
-    </div>
-  {% endfor %}
+  <div class="admin-topbar">
+    <span>Logged in as {{ current_user.username }}</span>
+    <form method="POST" action="{{ url_for('logout') }}">
+      <button class="btn btn-sm">Logout</button>
+    </form>
   </div>
-</section>
 
-<section class="admin-section">
-  <h2>Add Blog Post</h2>
+  <h1>Admin Dashboard</h1>
 
-  <form method="POST" action="{{ url_for('add_blog') }}" class="admin-form">
-    <input name="title" placeholder="Post title" required>
-    <textarea name="body" placeholder="Post content"></textarea>
-    <button class="btn">Publish</button>
-  </form>
+  <!-- ADD PROJECT -->
+  <section class="admin-section">
+    <h2>Add Project</h2>
 
-  <h2>Blog Posts</h2>
-  {% for post in posts %}
-    <div class="admin-blog-row">
-      <span>{{ post.title }}</span>
-      <div class="admin-actions">
-        <a href="{{ url_for('edit_blog', id=post.id) }}" class="btn">Edit</a>
-        <form method="POST" action="{{ url_for('delete_blog', id=post.id) }}">
-          <button class="btn btn-delete">Delete</button>
+    <form method="POST" action="{{ url_for('add_project') }}" class="admin-form admin-grid">
+      <input name="title" placeholder="Title" required>
+      <textarea name="description" placeholder="Description"></textarea>
+      <input name="tech" placeholder="Tech Stack">
+      <input name="github" placeholder="GitHub URL">
+      <input name="demo_url" placeholder="Live Demo URL">
+
+      <label class="admin-checkbox">
+        <input type="checkbox" name="has_demo">
+        Has Live Demo
+      </label>
+
+      <button class="btn admin-submit">Create Project</button>
+    </form>
+  </section>
+
+  <!-- PROJECTS -->
+  <section class="admin-section">
+    <h2>Projects</h2>
+
+    <div class="admin-project-grid">
+    {% for project in projects %}
+      <div class="admin-project-card">
+
+        <h3>{{ project.title }}</h3>
+        <p>{{ project.description }}</p>
+
+        <!-- Upload -->
+        <form method="POST" enctype="multipart/form-data"
+              action="{{ url_for('upload_project_media', project_id=project.id) }}">
+          <input type="file" name="file" required>
+
+          <div class="admin-actions">
+            <a href="{{ url_for('edit_project', id=project.id) }}" class="btn">Edit</a>
+            <button class="btn">Upload Media</button>
+          </div>
         </form>
+
+        <!-- Media -->
+        <div class="gallery">
+          {% for media in project.media %}
+            <div class="media-tile">
+
+              {% if media.media_type == "video" %}
+                <video src="{{ media.url }}" class="project-media" controls></video>
+              {% else %}
+                <img src="{{ media.url }}" class="project-media">
+              {% endif %}
+
+              <form method="POST" action="{{ url_for('delete_project_media', id=media.id) }}">
+                <button class="btn btn-delete btn-sm">Delete Media</button>
+              </form>
+
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- Delete Project -->
+        <form method="POST" action="{{ url_for('delete_project', id=project.id) }}">
+          <button class="btn btn-delete">Delete Project</button>
+        </form>
+
       </div>
+    {% endfor %}
     </div>
-  {% endfor %}
-</section>
+  </section>
+
+  <!-- BLOG -->
+  <section class="admin-section">
+    <h2>Add Blog Post</h2>
+
+    <form method="POST" action="{{ url_for('add_blog') }}" class="admin-form">
+      <input name="title" placeholder="Post title" required>
+      <textarea name="body" placeholder="Post content"></textarea>
+      <button class="btn">Publish</button>
+    </form>
+
+    <h2>Blog Posts</h2>
+    {% for post in posts %}
+      <div class="admin-blog-row">
+        <span>{{ post.title }}</span>
+        <div class="admin-actions">
+          <a href="{{ url_for('edit_blog', id=post.id) }}" class="btn">Edit</a>
+          <form method="POST" action="{{ url_for('delete_blog', id=post.id) }}">
+            <button class="btn btn-delete">Delete</button>
+          </form>
+        </div>
+      </div>
+    {% endfor %}
+  </section>
 
 </div>
+
 {% endblock %}
