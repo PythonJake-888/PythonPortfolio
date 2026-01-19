@@ -1,6 +1,6 @@
-/* ===========================
-   CORE THEME
-=========================== */
+/* ===================================================
+   CLEAN PORTFOLIO THEME — FINAL WORKING VERSION
+=================================================== */
 
 :root {
   --bg:#020617;
@@ -13,20 +13,28 @@
   --radius:18px;
 }
 
-*{box-sizing:border-box;}
+/* ---------- GLOBAL RESET ---------- */
+
+* {
+  box-sizing: border-box;
+}
 
 body{
   margin:0;
   background:radial-gradient(circle at top,#020617 0%,#000 80%);
   color:var(--text);
-  font-family:Inter,system-ui,sans-serif;
+  font-family:Inter, system-ui, sans-serif;
 }
 
-img,video{max-width:100%;display:block}
+/* Let images scale but never overflow */
+img, video {
+  max-width: 100%;
+  display: block;
+}
 
-/* ===========================
+/* ===================================================
    NAVBAR
-=========================== */
+=================================================== */
 
 .navbar{
   position:sticky;
@@ -37,16 +45,18 @@ img,video{max-width:100%;display:block}
   padding:1.2rem 2.5rem;
   backdrop-filter:blur(18px);
   border-bottom:1px solid var(--border);
+  background: rgba(2,6,23,0.6);
 }
 
 .navbar a{
   color:var(--text);
   text-decoration:none;
+  font-weight:500;
 }
 
-/* ===========================
-   GLOBAL SITE RAIL
-=========================== */
+/* ===================================================
+   SITE FRAME (CONTENT RAIL)
+=================================================== */
 
 .site-frame{
   max-width:1200px;
@@ -55,20 +65,14 @@ img,video{max-width:100%;display:block}
 }
 
 @media(max-width:640px){
-  .site-frame{padding:70px 20px 120px}
+  .site-frame{
+    padding:70px 20px 120px;
+  }
 }
 
-/* ===========================
-   HERO
-=========================== */
-
-.hero{max-width:720px}
-.hero .subtitle{color:var(--accent);letter-spacing:.14em;margin-bottom:12px}
-.hero-actions{display:flex;gap:18px;margin-top:28px}
-
-/* ===========================
+/* ===================================================
    BUTTONS
-=========================== */
+=================================================== */
 
 .btn{
   display:inline-flex;
@@ -83,18 +87,35 @@ img,video{max-width:100%;display:block}
   text-decoration:none;
   transition:.25s;
 }
-.btn:hover{transform:translateY(-2px);box-shadow:0 16px 60px rgba(56,189,248,.35)}
+
+.btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 16px 60px rgba(56,189,248,.35);
+}
+
+.btn-outline{
+  background:transparent;
+  border:1px solid var(--accent);
+  color:var(--accent);
+}
 
 .btn-delete{
   background:linear-gradient(135deg,#ef4444,#dc2626);
   color:white;
 }
 
-/* ===========================
-   PROJECT CARDS (PUBLIC)
-=========================== */
+/* ===================================================
+   PROJECTS PAGE — TILE BOARD LAYOUT
+=================================================== */
 
-.project-card{
+.projects-section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Each project card */
+.project-card {
   background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
   border:1px solid var(--border);
   border-radius:var(--radius);
@@ -102,18 +123,146 @@ img,video{max-width:100%;display:block}
   margin-bottom:2rem;
 }
 
-/* ===========================
+/* ---- TILE STRIP (THE "BOARD") ---- */
+.media-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+  width: 100%;
+}
+
+/* Each tile */
+.media-item {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;      /* crops nicely like a real tile board */
+  border-radius: 10px;
+  cursor: pointer;
+  background: #111;
+  border: 1px solid #222;
+}
+
+/* Tech tag under each project */
+.tech-badge {
+  display: inline-block;
+  background: #0b1220;
+  color: #9cf;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+/* Buttons row */
+.project-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* ===================================================
+   LIGHTBOX — CLEAN WORKING VERSION
+=================================================== */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 2rem;
+  cursor: pointer;
+}
+
+.lightbox.active {
+  display: flex;
+}
+
+/* Full-size image preview */
+#lightbox-img {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;   /* shows the whole image */
+  border-radius: 10px;
+}
+
+/* Full-size video preview */
+#lightbox-video {
+  max-width: 90vw;
+  max-height: 90vh;
+}
+
+/* ===================================================
+   BLOG STYLING
+=================================================== */
+
+.post-preview {
+  max-width: 820px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background: #111;
+  border-radius: 12px;
+  box-shadow: 0 0 30px rgba(0,0,0,.4);
+}
+
+.post-title {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.post-body {
+  white-space: pre-line;
+  line-height: 1.8;
+  font-size: 1.05rem;
+}
+
+/* ===================================================
    ADMIN LAYOUT
-=========================== */
+=================================================== */
 
 .admin-shell{
   max-width:1200px;
   margin:0 auto;
-  padding:90px 32px 140px;
+  padding:70px 24px 140px;
 }
 
-.admin-section{margin-bottom:90px}
+.admin-topbar {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:40px;
+}
 
+.admin-section{
+  margin-bottom:80px;
+}
+
+/* Admin project grid */
+.admin-project-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+  gap:28px;
+}
+
+/* Admin project card */
+.admin-project-card{
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:22px;
+}
+
+.admin-project-card img,
+.admin-project-card video{
+  width:100%;
+  max-height:220px;
+  object-fit:contain;
+  border-radius:12px;
+}
+
+/* Admin forms */
 .admin-form{
   max-width:520px;
   margin:40px auto;
@@ -134,243 +283,13 @@ img,video{max-width:100%;display:block}
   margin-bottom:14px;
 }
 
-.admin-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:14px;
-}
-
-.admin-grid textarea,
-.admin-grid input[name="demo_url"],
-.admin-checkbox,
-.admin-submit{
-  grid-column:1 / -1;
-}
-
-.admin-checkbox{display:flex;gap:10px;align-items:center}
-
-.admin-submit{width:100%}
-
-/* ===========================
-   ADMIN PROJECT TILES
-=========================== */
-
-.admin-project-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
-  gap:28px;
-}
-
-.admin-project-card{
-  background:rgba(255,255,255,.04);
-  border:1px solid var(--border);
-  border-radius:22px;
-  padding:22px;
-}
-
-.admin-project-card img,
-.admin-project-card video{
-  width:100%;
-  max-height:220px;
-  object-fit:contain;
-  border-radius:12px;
-}
-
-/* ===========================
+/* ===================================================
    FOOTER
-=========================== */
+=================================================== */
 
 .footer{
   text-align:center;
   color:var(--muted);
   padding:3rem;
   border-top:1px solid var(--border);
-}
-
-
-/* KILL SAFARI GHOST VIDEO COMPLETELY */
-#lightbox,
-#lightbox * {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-}
-
-/* ADMIN HEADER SPACING LOCK */
-
-.admin-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 48px;     /* HARD SPACE BELOW LOGOUT BAR */
-}
-
-.admin-page h1 {
-  margin-top: 0;
-  margin-bottom: 36px;    /* SPACE UNDER DASHBOARD TITLE */
-}
-
-.admin-section {
-  margin-top: 0;
-  margin-bottom: 80px;    /* SPACE BETWEEN SECTIONS */
-}
-
-
-.admin-shell {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 70px 24px 140px;
-}
-
-.admin-topbar {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:40px;
-}
-
-.admin-section { margin-bottom: 80px; }
-
-.admin-project-grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
-  gap:28px;
-}
-
-.admin-project-card {
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:20px;
-  padding:22px;
-}
-
-.admin-actions {
-  display:flex;
-  gap:14px;
-  margin:14px 0;
-}
-
-.project-media {
-  max-height:240px;
-  object-fit:contain;
-  margin-bottom:10px;
-}
-
-.admin-checkbox {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  grid-column:1 / -1;
-}
-
-#lightbox video { display:none !important; }
-#lightbox:not(.active) video { display:none !important; }
-.post-preview {
-  max-width: 820px;
-  margin: 3rem auto;
-  padding: 2rem;
-  background: #111;
-  border-radius: 12px;
-  box-shadow: 0 0 30px rgba(0,0,0,.4);
-}
-
-.post-title {
-  font-size: 1.8rem;
-  margin-bottom: 1rem;
-}
-
-.post-body {
-  white-space: pre-line;
-  line-height: 1.8;
-  font-size: 1.05rem;
-}
-/* ====== PROJECTS PAGE — TILE BOARD LAYOUT ====== */
-
-.projects-section {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.project-card {
-  background: #111;
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 20px;
-  box-shadow: 0 0 10px rgba(255,255,255,0.05);
-}
-
-/* Horizontal media strip like a tile board */
-.media-strip {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 10px;
-  margin: 12px 0;
-}
-
-/* Individual tiles */
-.media-item {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;      /* <-- THIS prevents giant stretched images */
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-/* Tech tag styling */
-.tech-badge {
-  display: inline-block;
-  background: #1a1a1a;
-  color: #9cf;
-  padding: 6px 10px;
-  border-radius: 8px;
-  font-size: 0.9rem;
-}
-
-/* Buttons container */
-.project-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-/* ===== PROJECT GALLERY — TILE BOARD LAYOUT ===== */
-
-.media-strip {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
-  margin: 12px 0;
-  width: 100%;
-}
-
-/* Each image/video tile */
-.media-item {
-  width: 100%;
-  height: 160px;           /* consistent tile height */
-  object-fit: cover;       /* crop nicely instead of stretch */
-  border-radius: 8px;
-  cursor: pointer;
-  background: #111;
-  border: 1px solid #222;
-}
-
-/* Keep cards neat */
-.project-card {
-  background: #0f0f0f;
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 20px;
-}
-
-/* Make media not overflow */
-.gallery {
-  overflow: hidden;
-  max-width: 100%;
-}
-#lightbox-img {
-  max-width: 90vw;
-  max-height: 90vh;
-  object-fit: contain;   /* show the whole image */
 }
