@@ -49,7 +49,10 @@ function openLightbox(src, type) {
   } else {
     vid.style.display = "none";
     img.style.display = "block";
-    img.src = src;
+    img.src = src;        // <-- important line
+    img.style.maxWidth = "90vw";
+    img.style.maxHeight = "90vh";
+    img.style.objectFit = "contain";   // <-- THIS keeps full image visible
   }
 }
 

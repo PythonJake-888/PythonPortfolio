@@ -19,7 +19,9 @@
     {% else %}
       <img src="{{ media.url }}"
      class="media-item"
-     onclick="openLightbox('{{ media.url }}', 'image')">
+     data-full="{{ media.url }}"
+     onclick="openLightbox(this.dataset.full, 'image')">
+
 
     {% endif %}
   {% endfor %}
