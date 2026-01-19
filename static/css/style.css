@@ -124,24 +124,39 @@ img, video {
 }
 
 /* ---- TILE STRIP (THE "BOARD") ---- */
+/* ===== SINGLE HORIZONTAL TILE BAR ===== */
+
 .media-strip {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  display: flex;                /* ← switch from grid to flex */
   gap: 12px;
   margin: 14px 0;
+  padding: 6px 0;
+  overflow-x: auto;             /* ← allows side scrolling */
+  overflow-y: hidden;
+  scroll-behavior: smooth;
   width: 100%;
+}
+
+/* hide ugly scrollbar on most browsers */
+.media-strip::-webkit-scrollbar {
+  height: 6px;
+}
+.media-strip::-webkit-scrollbar-thumb {
+  background: #222;
+  border-radius: 10px;
 }
 
 /* Each tile */
 .media-item {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;      /* crops nicely like a real tile board */
+  flex: 0 0 180px;      /* ← FIXED TILE WIDTH */
+  height: 140px;        /* ← consistent height */
+  object-fit: cover;    /* crops nicely */
   border-radius: 10px;
   cursor: pointer;
   background: #111;
   border: 1px solid #222;
 }
+
 
 /* Tech tag under each project */
 .tech-badge {
