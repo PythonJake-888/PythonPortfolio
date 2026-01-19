@@ -77,16 +77,22 @@ def load_user(uid):
     return User.query.get(int(uid))
 
 # ======================
-# MIGRATION AUTO-REPAIR
+# MIGRATION AUTO-REPAIR (SQLite + Postgres safe)
 # ======================
 def auto_repair():
-    db.session.execute(text("ALTER TABLE project_media ADD COLUMN IF NOT EXISTS created_at TIMESTAMP"))
-    db.session.execute(text("UPDATE project_media SET created_at = NOW() WHERE created_at IS NULL"))
-    db.session.commit()
+    inspector = db.inspect(db.engine)
 
+    columns = [c["name"] for c in inspector.get_columns("project_media")]
+
+    if "created_at" not in columns:
+        db.session.execute(
+            text("ALTER TABLE project_media ADD COLUMN created_at TIMESTAMP")
+        )
+        db.session.commit()
 with app.app_context():
     db.create_all()
     auto_repair()
+
 
 # ======================
 # AUTH ROUTES
